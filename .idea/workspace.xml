@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3df47766-bd0d-44d8-9d5e-755754b7705f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/dots-try.js" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/dots-try.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -166,6 +167,8 @@
       <workItem from="1613390041519" duration="558000" />
       <workItem from="1613390986422" duration="31000" />
       <workItem from="1613391546285" duration="115000" />
+      <workItem from="1613391974394" duration="571000" />
+      <workItem from="1613392587811" duration="22000" />
     </task>
     <servers />
   </component>
