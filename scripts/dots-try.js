@@ -49,7 +49,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
     } else {
         var randomiser = Math.random();
         //set randomiser to the percentage of trials that you want to be info seeking trials
-        if (randomiser <= 0.31) {
+        if (randomiser <= 1) {
             //if we are in an info seeking trial, then there is no partner
             infoSeekingTrial = true;
         } else {
