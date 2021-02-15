@@ -139,8 +139,6 @@ jsPsych.plugins['jspsych-message-splash'] = (function () {
       var highlight = '<highlight style="color: ' + color1 + '">';
     }
 
-    var partnerChosen = 20-participantChosen;
-
 
     var subMessage = createGeneral(
         subMessage,
@@ -151,8 +149,6 @@ jsPsych.plugins['jspsych-message-splash'] = (function () {
         '<h1>You may take a short break if you like.</h1>',
     );
 
-    //reset variable that counts how many times participant's answer was chosen
-    participantChosen = 0;
 
 
 

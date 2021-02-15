@@ -61,6 +61,12 @@
     (note: these must be declared directly in <script> and not within $(document).ready)
     */
 
+    // set infoSeekingVersion to true to add interspersed trials where participants do not see a partners response but have the chance to seek see the stimulus again
+    //also manually remove the "dotTaskStartInfoSeeking" page if you set this to false!
+    //set the percentage of info seeking trials in "dots-try"
+    const infoSeekingVersion = true;
+
+
     /* PROLIFIC PARAMETERS */
 
     var ProlificID = getUrlVars()['PROLIFIC_PID'];
@@ -173,6 +179,7 @@
         'assets/dotTask_2.5.0 practice.gif',
         'assets/dotTask_2.4.0.gif',
         'assets/dotTask_2.6.0.gif',
+        'assets/dotTask_Info.gif',
         'assets/partner.png',
     ];
 
@@ -207,7 +214,6 @@
     var accuracy = 0;
     var participantAccu;
     var partnerAccu;
-    var participantChosen = 0;
     var partner;
     var trialsPerBlock = 20; //make trial count 20 here (5x20 trials = 100 trials per partner)
     var dotCountHigherList = [];
@@ -310,7 +316,7 @@
         rightColor: 'rgb(255,255,255)',
         waitTimeLimit: 2000,
         isTutorialMode: true,
-        trial_count: 100,             //make trial count 100 here
+        trial_count: 3,             //make trial count 100 here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         yellowButtonEnabled: false,
         greenButtonName: 'CONTINUE',
         seeAgain: 'practice1',
@@ -344,7 +350,10 @@
         isTutorialMode: false,
         trial_count: trialsPerBlock,
         blockCounterEnabled: true,
-        greenButtonName: 'CONTINUE',
+        yellowButtonEnabled: true,
+        yellowButtonName: 'SEE AGAIN',
+        greenButtonEnabled: true,
+        greenButtonName: 'FINAL DECISION',
         seeAgain: 'easier',
         partner: 'underconfident'
     };
@@ -361,7 +370,10 @@
         isTutorialMode: false,
         trial_count: trialsPerBlock,
         blockCounterEnabled: true,
-        greenButtonName: 'CONTINUE',
+        yellowButtonEnabled: true,
+        yellowButtonName: 'SEE AGAIN',
+        greenButtonEnabled: true,
+        greenButtonName: 'FINAL DECISION',
         seeAgain: 'easier',
         partner: 'overconfident'
     };
@@ -393,8 +405,15 @@
     var dotTaskStart = {
         type: 'jspsych-notice',
         section1_text: 'You have now completed the first two phases of the dot game.',
-        section2_text: 'For the rest of the experiment, you\'ll be doing the task you just practiced. However, from now on you will see the response of another past participant for the same dots-grid. Your partner did about as well as you did in the practice trials. <br><br><highlight style="color: rgb(13,255,146)">You will earn points depending on whether your response is correct and how accurate your confidence judgment was.</highlight> At the end of the game, we will take all trials where you indicated, for example, a confidence of 70-80% and check if in fact 70-80% of those trials were correct. The closer your confidence judgements align with your actual accuracy, the higher your cash bonus will be at the end of the experiment, so <highlight style="color: rgb(13,255,146)">you will earn more with more accurate confidence judgements</highlight>. <br><br>There will be 10 blocks of 20 trials, which should take approximately 25 minutes to complete altogether. Press "continue" to continue to the first block of 20 trials',
+        section2_text: 'For the rest of the experiment, you\'ll be doing the task you just practiced. However, from now on you will see the response of another past participant for the same dots-grid. Your partner did about as well as you did in the practice trials. <br><br><highlight style="color: rgb(13,255,146)">You will earn points depending on whether your response is correct and how accurate your confidence judgment was.</highlight> At the end of the game, we will take all trials where you indicated, for example, a confidence of 70-80% and check if in fact 70-80% of those trials were correct. The closer your confidence judgements align with your actual accuracy, the higher your cash bonus will be at the end of the experiment, so <highlight style="color: rgb(13,255,146)">you will earn more with more accurate confidence judgements</highlight>.',
         img_id: 'dotTask-gif3'
+    };
+
+    var dotTaskStartInfoSeeking = {
+        type: 'jspsych-notice',
+        section1_text: 'Sometimes you are on your own.',
+        section2_text: 'Every now and then, there will be trials where you are <highlight style="color: rgb(13,255,146)">on your own</highlight>. In those trials, there won\'t be a response from the other participant. However, on those trials you will have the <highlight style="color: rgb(13,255,146)">chance to see the dots-grid again</highlight> before committing to a final decision. <br><br>There will be 10 blocks of 20 trials, which should take approximately 25 minutes to complete altogether. Press "continue" to continue to the first block of 20 trials',
+        img_id: 'dotTask-gif4'
     };
 
     // var dotTaskStart = {
@@ -495,7 +514,7 @@
                 order = "underconfident, then overconfident";
                 dataObject["experiment_condition"] = order;
                 var timeline = [
-                    loading,
+                    //loading,
                     PIS,
                     consent,
                     demographics,
@@ -541,7 +560,7 @@
                 order = "overconfident, then underconfident";
                 dataObject["experiment_condition"] = order;
                 var timeline = [
-                    loading,
+                    //loading,
                     PIS,
                     consent,
                     demographics,
@@ -588,20 +607,14 @@
         case 'testing':
             if (partnerOrder > 0.5) {
                 var timeline = [
-                    dotTaskInstructions1,
-                    dotTaskPractice1,
-                    dotTaskInstructions2,
-                    dotTaskPractice2,
                     dotTaskStart,
+                    dotTask1,
                     thankYou
                 ];
             } else {
                 var timeline = [
-                    dotTaskInstructions1,
-                    dotTaskPractice1,
-                    dotTaskInstructions2,
-                    dotTaskPractice2,
                     dotTaskStart,
+                    dotTask1,
                     thankYou
                 ];
             }

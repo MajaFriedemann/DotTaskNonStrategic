@@ -920,6 +920,13 @@ button.default-white-button.start-tutorial, .button.default-white-button.start-t
   background-repeat: no-repeat;
 }
 
+.gameboard-gif#dotTask-gif4 {
+  background: url("../assets/dotTask_Info.gif");
+  background-size: 35vmax 35vmax;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 .gameboard-gif#dotTask-partner {
   background: url("../assets/partner.png");
   background-size: 18vmax 18vmax;

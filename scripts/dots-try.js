@@ -31,6 +31,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
     var jointCorrectResponse;
     var partnerCorrectResponse;
     var sliderActive = true;
+    var seeMore = false;  // set to true when more info is sought and the stimuli are shown a second time
     var start_timer;
     var dotPairs;
     var dotConfidences;
@@ -41,6 +42,20 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
     var confidence_timer;
     var accuracyThreshold = 60;  //threshold for practice trials (if we are in tutorialmode)
 
+    //if we are in the infoSeekingVersion, then determine if this trial will be an infoSeekingTrial
+    var infoSeekingTrial;
+    if (infoSeekingVersion === false) {
+        infoSeekingTrial = false
+    } else {
+        var randomiser = Math.random();
+        //set randomiser to the percentage of trials that you want to be info seeking trials
+        if (randomiser <= 0.3) {
+            //if we are in an info seeking trial, then there is no partner
+            infoSeekingTrial = true;
+        } else {
+            infoSeekingTrial = false;
+        }
+    }
 
     // prevent context menu from opening on right click (context menu on right click enabled in case of "testing")
     // if (trialTypeOrder == "all") {
@@ -218,6 +233,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
     // button name
     var buttonsToShow = {};
     buttonsToShow['submit'] = greenButtonName;
+    buttonsToShow['moreInfo'] = yellowButtonName;
 
 
     // draw the slider
@@ -245,6 +261,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
 
     // reset the event loggers
     $('.submit-button').off('click');
+    $('.more-button').off('click');
     $('.scale-row').off('mousemove').off('click');
 
 
@@ -347,120 +364,300 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
         // turn off the button options
         $('.scale-button').addClass('invisible');
 
+        // other options
+        switch (type) {
+            // yellow see again button is clicked
+            case 'seeMore':
+                seeMore = true;
 
-        // update the staircase if we are in practice mode (correctResponse is true or false such that dots stimulus becomes harder or easier)
-        if (partner === "none") {
-            dotsStaircase.next(correctResponse);
-            staircaseSteps++;
-        }
+                console.log(dotPairs);
 
+                // same grid (simple mask-lifting)
+                $('.mask-left').css('border', '4px solid rgb(255,255,255)');
+                $('.mask-right').css('border', '4px solid rgb(255,255,255)');
+                $('.response-area').css('visibility', 'hidden');
+                $('.confidence-question').css('visibility', 'hidden');
+                $('.grid-mask').css('visibility', 'hidden');
+                $('#jspsych-canvas-sliders-response-canvas').css('visibility', 'hidden');
+                $('.more-button').remove();
 
-        // calculate the wait time (this is from stimulus presentation until clicking continue, whereas RT is from stimulus presentation to initial choice via mouse-lick
-        confidence_timer = Date.now();
-        var waitTime = calculateRT(start_timer, confidence_timer);
+                var fixationCross = createGeneral(
+                    fixationCross,
+                    document.getElementById('jspsych-canvas-sliders-response-wrapper'),
+                    'div',
+                    'fixation-cross see-again',
+                    'fixation-cross',
+                    '+'
+                );
 
+                setTimeout(function () {
+                    document.getElementById('fixation-cross').remove();
+                    $('#jspsych-canvas-sliders-response-canvas').css('visibility', 'visible');
 
-        // clear the display on a timer
-        setTimeout(function () {
-            document.getElementById('jspsych-canvas-sliders-response-wrapper').remove();
-            document.getElementById('response-area').remove();
-            console.log('that was trial ' + trialCounterVariable + ' of ' + trialCount);
-        }, 500);
+                    setTimeout(function () {
+                        $('.grid-mask').css('visibility', 'visible');
 
+                        setTimeout(function () {
+                            $('.confidence-question').css('visibility', 'visible');
+                            document.getElementById("confidence-question").innerHTML = "<h1>Which box contained more dots?</h1> (left click for left box, right click for right box)</h1>";
+                        }, transitionPeriod);
+                    }, dotPeriod);
+                }, fixationPeriod);
 
-        //record trial data
-        trialDataVariable['dots_waitTimes'].push(waitTime);
-        trialDataVariable['dots_isCorrect'].push(correctResponse);
-        trialDataVariable['dots_jointCorrect'].push(jointCorrectResponse);// this is for calculating the bonus
-        trialDataVariable['dots_partnerCorrect'].push(partnerCorrectResponse);
-        dots_jointTotalCorrect += trialDataVariable.dots_jointCorrect.filter(Boolean).length;
-        trialDataVariable['dots_pairs'].push(JSON.stringify(dotPairs));
-        trialDataVariable['dots_confidences'].push(dotConfidences);
-        trialDataVariable['initial_choices'].push(initialChoices);
-        trialDataVariable['partner_confidences'].push(partnerConfidences);
-        trialDataVariable['dots_RTs'].push(dotRTs);
-        //trialDataVariable['dots_isTutorialMode'].push(isTutorialMode);
-        trialCounterVariable++;
-        dots_totalTrials++;
-        trialDataVariable['trial_count'].push(dots_totalTrials);
+                var secondChoice;
+                $(document).on('mousedown', function (event) {
+                    // turn off this event handler
+                    $(document).off('mousedown');
 
-
-        // if current trial-number is less than total trial-number, call the drawFixation function and begin new trial
-        if (trialCounterVariable < trialCount) {
-            setTimeout(function () { drawFixation(parent, canvasWidth, canvasHeight, dotCount, dotsStaircase, upperColor, lowerColor, dots_tooltipLabels, dots_endLabels, showPercentage, seeAgain, waitTimeLimit, fixationPeriod, dotPeriod, transitionPeriod, trialCount, trialCounterVariable, trialDataVariable, permanentDataVariable, isTutorialMode, accuracyThreshold, redButtonEnabled, redButtonName, yellowButtonEnabled, yellowButtonName, greenButtonEnabled, greenButtonName, defaultOptionEnabled, partner); }, 400);
-
-
-        // if current trial-number is equal to total trial-number, then evaluate accuracy and end the block
-        } else {
-            // evaluate accuracy
-            setTimeout(function () {
-
-                // if there is no partner, accuracy is based on individual responses, otherwise its based on joint decision accuracy
-                if (partner != "none") {
-                    accuracy = round(mean(trialDataVariable['dots_jointCorrect']), 2) * 100;
-                    participantAccu = round(mean(trialDataVariable['dots_isCorrect']), 2) * 100;
-                    partnerAccu = round(mean(trialDataVariable['dots_partnerCorrect']), 2) * 100;
-                } else {
-                    accuracy = round(mean(trialDataVariable['dots_isCorrect']), 2) * 100;
-                }
-
-                //if we are in tutorial mode, practice trials need to be repeated in case accuracy is below accuracy threshold
-                if (isTutorialMode) {
-                    if (accuracy >= accuracyThreshold) {
-                        var section4_button = 'CONTINUE';
-                        var section4_text = 'Congratulations, your accuracy during the last set of trials was ' + accuracy + '%.';
-                        if (seeAgain !== "practice1") {
-                            dots_blockCount = 0;
-                        } else {
-                            dots_blockCount = -1;
-                        }
-                    } else {
-                        var section4_button = 'REPEAT';
-                        var section4_text = 'Your accuracy during these trials was ' + accuracy + '%, which is below the required accuracy threshold. Please click "repeat" below to repeat the practice round.';
+                    // highlight the chosen box
+                    if (event.button === 0) {
+                        secondChoice = "left";
+                        $('.mask-left').css('border', '5px solid rgb(13, 219, 255');
+                        $('.mask-right').css('border', '5px solid rgba(0,0,0,0)');
+                        $('#sliderMask').css('left', '52%');
+                    } else if (event.button === 2) {
+                        secondChoice = "right";
+                        $('.mask-left').css('border', '5px solid rgba(0,0,0,0)');
+                        $('.mask-right').css('border', '5px solid rgb(13, 219, 255');
+                        $('#sliderMask').css('left', '-2%');
                     }
 
-                    // set up feedback page
-                    $('.jspsych-content-wrapper')
-                        .css('width', '100%');
 
-                    var section4 = createGeneral(
-                        section4,
-                        parent,
-                        'section',
-                        'tutorial-section section4',
-                        'dots-tutorial-section4',
-                        ''
-                    );
+                    //record if second response was correct or false
+                    var changeOfMind;
+                    if (secondChoice === initialChoice) {
+                        changeOfMind = false;
+                    } else {
+                        changeOfMind = true;
+                    }
 
-                    var section4_title = createGeneral(
-                        section4_title,
-                        section4,
-                        'div',
-                        'tutorial-text',
-                        'dots-tutorial-text4',
-                        section4_text
-                    );
+                    //show FINAL DECISION button
+                    $('.submit-button').css('margin-left', 0);
+                    setTimeout(function () {
+                        $('.submit-button').css('visibility', 'visible');
+                        // enable cursor for whole screen
+                        $('body').css('cursor', 'auto');
+                    }, transitionPeriod);
 
-                    $('#dots-tutorial-text4').css('font-size', '3vmax');
+                });
 
-                    var section4_button = createGeneral(
-                        section4_button,
-                        section4,
-                        'button',
-                        'default-white-button glowy-box',
-                        'dots-tutorial-continue',
-                        '<div>' + section4_button + '</div>'
-                    );
+                break;
+
+            case 'finalDecision':
+                console.log(dotPairs);
+
+                //reset the button
+                $('.submit-button').on('click', function () {
+                    buttonBackend('submit');
+                });
+
+                // //show feedback
+                // setTimeout(function () {
+                //     if (seeMore === true) {
+                //         //second choice counts
+                //         if (secondChoice === majoritySide) {
+                //             //correct
+                //             correctResponse = true;
+                //             document.getElementById('confidence-question').innerHTML = '<h1 style="color: rgb(13,255,146)">CORRECT</h1>';
+                //         } else {
+                //             //incorrect
+                //             correctResponse = false;
+                //             document.getElementById('confidence-question').innerHTML = '<h1><highlight style="color: red">INCORRECT</highlight></h1>';
+                //         }
+                //     } else {
+                //         //initial choice counts
+                //         if (initialChoice === majoritySide) {
+                //             //correct
+                //             document.getElementById('confidence-question').innerHTML = '<h1 style="color: rgb(13,255,146)">CORRECT</h1>';
+                //         } else {
+                //             //incorrect
+                //             document.getElementById('confidence-question').innerHTML = '<h1><highlight style="color: red">INCORRECT</highlight></h1>';
+                //         }
+                //     }
+                // }, 700);
+
+                //partners response not included in their accuracy percentage
+                partnerCorrectResponse = NaN;
+                //jointCorrectResponse = NaN;
 
 
-                    // if practice block was successful
-                    if (accuracy >= accuracyThreshold) {
+                //trigger submit button
+                buttonBackend('submit');
 
-                        // we save the data
+                break;
 
-                        $('#dots-tutorial-continue').on('click', function () {
+            default:
+                // update the staircase if we are in practice mode (correctResponse is true or false such that dots stimulus becomes harder or easier)
+                if (partner === "none") {
+                    dotsStaircase.next(correctResponse);
+                    staircaseSteps++;
+                }
+
+
+                // calculate the wait time (this is from stimulus presentation until clicking continue, whereas RT is from stimulus presentation to initial choice via mouse-lick
+                confidence_timer = Date.now();
+                var waitTime = calculateRT(start_timer, confidence_timer);
+
+
+                // clear the display on a timer
+                setTimeout(function () {
+                    document.getElementById('jspsych-canvas-sliders-response-wrapper').remove();
+                    document.getElementById('response-area').remove();
+                    console.log('that was trial ' + trialCounterVariable + ' of ' + trialCount);
+                }, 500);
+
+
+                //record trial data
+                trialDataVariable['dots_waitTimes'].push(waitTime);
+                trialDataVariable['dots_isCorrect'].push(correctResponse);
+                trialDataVariable['dots_jointCorrect'].push(jointCorrectResponse);// this is for calculating the bonus
+                trialDataVariable['dots_partnerCorrect'].push(partnerCorrectResponse);
+                dots_jointTotalCorrect += trialDataVariable.dots_jointCorrect.filter(Boolean).length;
+                trialDataVariable['dots_pairs'].push(JSON.stringify(dotPairs));
+                trialDataVariable['dots_confidences'].push(dotConfidences);
+                trialDataVariable['initial_choices'].push(initialChoices);
+                trialDataVariable['partner_confidences'].push(partnerConfidences);
+                trialDataVariable['dots_RTs'].push(dotRTs);
+                //trialDataVariable['dots_isTutorialMode'].push(isTutorialMode);
+                trialCounterVariable++;
+                dots_totalTrials++;
+                trialDataVariable['trial_count'].push(dots_totalTrials);
+
+
+                // if current trial-number is less than total trial-number, call the drawFixation function and begin new trial
+                if (trialCounterVariable < trialCount) {
+                    setTimeout(function () { drawFixation(parent, canvasWidth, canvasHeight, dotCount, dotsStaircase, upperColor, lowerColor, dots_tooltipLabels, dots_endLabels, showPercentage, seeAgain, waitTimeLimit, fixationPeriod, dotPeriod, transitionPeriod, trialCount, trialCounterVariable, trialDataVariable, permanentDataVariable, isTutorialMode, accuracyThreshold, redButtonEnabled, redButtonName, yellowButtonEnabled, yellowButtonName, greenButtonEnabled, greenButtonName, defaultOptionEnabled, partner); }, 400);
+
+
+                    // if current trial-number is equal to total trial-number, then evaluate accuracy and end the block
+                } else {
+                    // evaluate accuracy
+                    setTimeout(function () {
+
+                        // if there is no partner, accuracy is based on individual responses, otherwise its based on joint decision accuracy
+                        if (partner != "none") {
+                            accuracy = round(mean(trialDataVariable['dots_jointCorrect']), 2) * 100;
+                            participantAccu = round(mean(trialDataVariable['dots_isCorrect']), 2) * 100;
+                            partnerAccu = round(mean(trialDataVariable['dots_partnerCorrect']), 2) * 100;
+                        } else {
+                            accuracy = round(mean(trialDataVariable['dots_isCorrect']), 2) * 100;
+                        }
+
+                        //if we are in tutorial mode, practice trials need to be repeated in case accuracy is below accuracy threshold
+                        if (isTutorialMode) {
+                            if (accuracy >= accuracyThreshold) {
+                                var section4_button = 'CONTINUE';
+                                var section4_text = 'Congratulations, your accuracy during the last set of trials was ' + accuracy + '%.';
+                                if (seeAgain !== "practice1") {
+                                    dots_blockCount = 0;
+                                } else {
+                                    dots_blockCount = -1;
+                                }
+                            } else {
+                                var section4_button = 'REPEAT';
+                                var section4_text = 'Your accuracy during these trials was ' + accuracy + '%, which is below the required accuracy threshold. Please click "repeat" below to repeat the practice round.';
+                            }
+
+                            // set up feedback page
+                            $('.jspsych-content-wrapper')
+                                .css('width', '100%');
+
+                            var section4 = createGeneral(
+                                section4,
+                                parent,
+                                'section',
+                                'tutorial-section section4',
+                                'dots-tutorial-section4',
+                                ''
+                            );
+
+                            var section4_title = createGeneral(
+                                section4_title,
+                                section4,
+                                'div',
+                                'tutorial-text',
+                                'dots-tutorial-text4',
+                                section4_text
+                            );
+
+                            $('#dots-tutorial-text4').css('font-size', '3vmax');
+
+                            var section4_button = createGeneral(
+                                section4_button,
+                                section4,
+                                'button',
+                                'default-white-button glowy-box',
+                                'dots-tutorial-continue',
+                                '<div>' + section4_button + '</div>'
+                            );
+
+
+                            // if practice block was successful
+                            if (accuracy >= accuracyThreshold) {
+
+                                // we save the data
+
+                                $('#dots-tutorial-continue').on('click', function () {
+                                    permanentDataVariable["dots_accuracy"].push(accuracy);
+                                    permanentDataVariable["trial_count"].push(trialDataVariable["trial_count"]);
+                                    permanentDataVariable["dots_pairs"].push(trialDataVariable["dots_pairs"]);
+                                    permanentDataVariable["dots_majoritySide"].push(trialDataVariable["dots_majoritySide"]);
+                                    permanentDataVariable["dots_confidences"].push(trialDataVariable["dots_confidences"]);
+                                    permanentDataVariable["initial_choices"].push(trialDataVariable["initial_choices"]);
+                                    permanentDataVariable["partner_confidences"].push(trialDataVariable["partner_confidences"]);
+                                    //permanentDataVariable["dots_moreAsked"].push(trialDataVariable["dots_moreAsked"]);
+                                    permanentDataVariable["dots_isCorrect"].push(trialDataVariable["dots_isCorrect"]);
+                                    permanentDataVariable["dots_jointCorrect"].push(trialDataVariable["dots_jointCorrect"]);
+                                    permanentDataVariable["dots_partnerCorrect"].push(trialDataVariable["dots_partnerCorrect"]);
+                                    permanentDataVariable["dots_RTs"].push(trialDataVariable["dots_RTs"]);
+                                    permanentDataVariable["dots_waitTimes"].push(trialDataVariable["dots_waitTimes"]);
+                                    permanentDataVariable["block_count"].push(dots_blockCount);
+
+                                    saveCSV(subjectID, currentAttempt);
+
+                                    // enable cursor for whole screen
+                                    $('body').css('cursor', 'auto');
+
+                                    // finish the trial
+                                    jsPsych.finishTrial();
+                                    return;
+                                });
+
+
+                                // if the practice block was not successful, we do not save the data and start a new block of trials
+                            } else {
+                                dots_totalTrials = 0;
+                                trialCounterVariable = 0;
+                                // reset trial data variable
+                                trialDataVariable = {
+                                    trial_count: [],
+                                    dots_pairs: [],
+                                    dots_majoritySide: [],
+                                    dots_confidences: [],
+                                    initial_choices: [],
+                                    partner_confidences: [],
+                                    dots_moreAsked: [],
+                                    dots_isCorrect: [],
+                                    dots_jointCorrect: [],
+                                    dots_partnerCorrect: [],
+                                    dots_isTutorialMode: [],
+                                    dots_firstIsCorrect: [],
+                                    dots_RTs: [],
+                                    dots_waitTimes: []
+                                };
+                                $('#dots-tutorial-continue').on('click', function () {
+                                    setTimeout(function () { drawFixation(parent, canvasWidth, canvasHeight, dotCount, dotsStaircase, upperColor, lowerColor, dots_tooltipLabels, dots_endLabels, showPercentage, seeAgain, waitTimeLimit, fixationPeriod, dotPeriod, transitionPeriod, trialCount, trialCounterVariable, trialDataVariable, permanentDataVariable, isTutorialMode, accuracyThreshold, redButtonEnabled, redButtonName, yellowButtonEnabled, yellowButtonName, greenButtonEnabled, greenButtonName, defaultOptionEnabled, partner); }, 400);
+                                });
+                            }
+
+
+                            // if we are not in tutorial mode
+                        } else {
+                            // we save the data
+
                             permanentDataVariable["dots_accuracy"].push(accuracy);
                             permanentDataVariable["trial_count"].push(trialDataVariable["trial_count"]);
+                            //permanentDataVariable["dots_isTutorialMode"].push(trialDataVariable["dots_isTutorialMode"]);
                             permanentDataVariable["dots_pairs"].push(trialDataVariable["dots_pairs"]);
                             permanentDataVariable["dots_majoritySide"].push(trialDataVariable["dots_majoritySide"]);
                             permanentDataVariable["dots_confidences"].push(trialDataVariable["dots_confidences"]);
@@ -472,82 +669,27 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                             permanentDataVariable["dots_partnerCorrect"].push(trialDataVariable["dots_partnerCorrect"]);
                             permanentDataVariable["dots_RTs"].push(trialDataVariable["dots_RTs"]);
                             permanentDataVariable["dots_waitTimes"].push(trialDataVariable["dots_waitTimes"]);
-                            permanentDataVariable["block_count"].push(dots_blockCount);
 
                             saveCSV(subjectID, currentAttempt);
 
-                            // enable cursor for whole screen
+
+                            // increase the block count
+                            dots_totalCorrect += trialDataVariable.dots_isCorrect.filter(Boolean).length;
+                            dots_blockCount++;
+                            permanentDataVariable["block_count"].push(dots_blockCount);
+
+                            // enable the cursor for the whole screen
                             $('body').css('cursor', 'auto');
 
                             // finish the trial
                             jsPsych.finishTrial();
                             return;
-                        });
-
-
-                    // if the practice block was not successful, we do not save the data and start a new block of trials
-                    } else {
-                        dots_totalTrials = 0;
-                        trialCounterVariable = 0;
-                        // reset trial data variable
-                        trialDataVariable = {
-                            trial_count: [],
-                            dots_pairs: [],
-                            dots_majoritySide: [],
-                            dots_confidences: [],
-                            initial_choices: [],
-                            partner_confidences: [],
-                            dots_moreAsked: [],
-                            dots_isCorrect: [],
-                            dots_jointCorrect: [],
-                            dots_partnerCorrect: [],
-                            dots_isTutorialMode: [],
-                            dots_firstIsCorrect: [],
-                            dots_RTs: [],
-                            dots_waitTimes: []
-                        };
-                        $('#dots-tutorial-continue').on('click', function () {
-                            setTimeout(function () { drawFixation(parent, canvasWidth, canvasHeight, dotCount, dotsStaircase, upperColor, lowerColor, dots_tooltipLabels, dots_endLabels, showPercentage, seeAgain, waitTimeLimit, fixationPeriod, dotPeriod, transitionPeriod, trialCount, trialCounterVariable, trialDataVariable, permanentDataVariable, isTutorialMode, accuracyThreshold, redButtonEnabled, redButtonName, yellowButtonEnabled, yellowButtonName, greenButtonEnabled, greenButtonName, defaultOptionEnabled, partner); }, 400);
-                        });
-                    }
-
-
-                // if we are not in tutorial mode
-                } else {
-                    // we save the data
-
-                    permanentDataVariable["dots_accuracy"].push(accuracy);
-                    permanentDataVariable["trial_count"].push(trialDataVariable["trial_count"]);
-                    //permanentDataVariable["dots_isTutorialMode"].push(trialDataVariable["dots_isTutorialMode"]);
-                    permanentDataVariable["dots_pairs"].push(trialDataVariable["dots_pairs"]);
-                    permanentDataVariable["dots_majoritySide"].push(trialDataVariable["dots_majoritySide"]);
-                    permanentDataVariable["dots_confidences"].push(trialDataVariable["dots_confidences"]);
-                    permanentDataVariable["initial_choices"].push(trialDataVariable["initial_choices"]);
-                    permanentDataVariable["partner_confidences"].push(trialDataVariable["partner_confidences"]);
-                    //permanentDataVariable["dots_moreAsked"].push(trialDataVariable["dots_moreAsked"]);
-                    permanentDataVariable["dots_isCorrect"].push(trialDataVariable["dots_isCorrect"]);
-                    permanentDataVariable["dots_jointCorrect"].push(trialDataVariable["dots_jointCorrect"]);
-                    permanentDataVariable["dots_partnerCorrect"].push(trialDataVariable["dots_partnerCorrect"]);
-                    permanentDataVariable["dots_RTs"].push(trialDataVariable["dots_RTs"]);
-                    permanentDataVariable["dots_waitTimes"].push(trialDataVariable["dots_waitTimes"]);
-
-                    saveCSV(subjectID, currentAttempt);
-
-
-                   // increase the block count
-                    dots_totalCorrect += trialDataVariable.dots_isCorrect.filter(Boolean).length;
-                    dots_blockCount++;
-                    permanentDataVariable["block_count"].push(dots_blockCount);
-
-                    // enable the cursor for the whole screen
-                    $('body').css('cursor', 'auto');
-
-                    // finish the trial
-                    jsPsych.finishTrial();
-                    return;
+                        }
+                    }, 1500);
                 }
-            }, 1500);
+
         }
+
     }
 
 
@@ -664,7 +806,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
 
             // draw partner's confidence marker
             setTimeout(function (){
-                if (partner !== "none") {
+                if (partner !== "none" && infoSeekingTrial !== true) {
                     var partnerMarker = createGeneral(
                         partnerMarker,
                         document.getElementById('scale'),
@@ -698,7 +840,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                 ''
             );
 
-            if (partner !== "none") {
+            if (partner !== "none" && infoSeekingTrial !== true) {
 
                 //automatically trigger click on continue button
                 setTimeout(function () {
@@ -717,24 +859,58 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                 }, 1000);
 
 
-            // if there is no partner
+            // if there is no partner or we are in an info seeking trial
             } else {
-                // shot submit button more quickly if there is no partner to wait for
-                // setTimeout(function (){
-                //     $('.scale-button').removeClass('invisible');
-                // }, 1000);
-                //automatically trigger click on continue button more quickly when there is no partner to wait for
-                setTimeout(function () {
-                    buttonBackend('submit');
-                }, 1000)
+                if (partner === "none") {
+                    // // give feedback based on individual choice
+                    // setTimeout(function (){
+                    //     if (backendConfidence > 50) {
+                    //         $('#higherConfidenceBox').css('left', 'calc(' + backendConfidence + '% + 2px)');
+                    //     } else {
+                    //         $('#higherConfidenceBox').css('left', 'calc(' + backendConfidence + '% - 2px)');
+                    //     }
+                    //     if (correctResponse == true) {
+                    //         document.getElementById('confidence-question').innerHTML = '<h1 style="color: rgb(13,255,146)">CORRECT</h1>';
+                    //         $('#higherConfidenceBox').css('border', '6px solid limegreen');
+                    //     } else {
+                    //         document.getElementById('confidence-question').innerHTML = '<h1 style="color: rgb(255,0,51)">INCORRECT</h1>';
+                    //         $('#higherConfidenceBox').css('border', '6px solid red');
+                    //     }
+                    //     $('#higherConfidenceBox').css('visibility', 'visible');
+                    // }, 700);
+
+                    // shot submit button more quickly if there is no partner to wait for
+                    // setTimeout(function (){
+                    //     $('.scale-button').removeClass('invisible');
+                    // }, 1000);
+                    //automatically trigger click on continue button more quickly when there is no partner to wait for
+                    setTimeout(function () {
+                        buttonBackend('submit');
+                    }, 1500)
+                    //if we are in an info seeking trial
+                } else {
+                    console.log(dotPairs);
+                    $('.scale-button').removeClass('invisible');
+                }
             }
         },
     });
 
 
-    // when continue button is clicked, the above specified function is called
-    $('.submit-button').on('click', function () {
-        buttonBackend('submit');
+    if (infoSeekingTrial === false) {
+        // when continue button is clicked, the above specified function is called
+        $('.submit-button').on('click', function () {
+            buttonBackend('submit');
+        });
+    } else {
+        $('.submit-button').on('click', function () {
+            buttonBackend('finalDecision');
+        });
+    };
+
+    // when see Again button is clicked, the above specified function is called
+    $('.more-button').on('click', function () {
+        buttonBackend('seeMore');
     });
 
 

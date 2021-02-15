@@ -323,6 +323,18 @@ function mean(array) {
   var avg = total / array.length;
   return avg;
 }
+ /* calculate average for an array ignoring NaN */
+ function meanNaN(array) {
+   array = array.filter(function (value) {
+     return !Number.isNaN(value);
+   });
+   var total = 0;
+   for (var i = 0; i < array.length; i++) {
+     total += array[i];
+   }
+   var avg = total / array.length;
+   return avg;
+ }
 
 /* calculates minutes and seconds from milliseconds */
 function msToMinSec(ms) {
