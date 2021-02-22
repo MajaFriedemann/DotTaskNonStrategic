@@ -10,7 +10,7 @@
      * @param {Array} dots_tooltipLabels
      * @param {Array} dots_endLabels
      * @param {boolean} showPercentage = show percentage on scale?
-     * @param {string} seeAgain - options for the "See Again" button: 'same', 'similar', 'easier'
+     * @param {string} staircasingPracticee - options for the "See Again" button: 'same', 'similar', 'off'
      * @param {int} waitTimeLimit - maximum wait time
      * @param {int} fixationPeriod
      * @param {int} dotPeriod
@@ -741,7 +741,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
      * @param {Array} dots_tooltipLabels
      * @param {Array} dots_endLabels
      * @param {boolean} showPercentage = show percentage on scale?
-     * @param {string} seeAgain - options for the "See Again" button: 'same', 'similar', 'easier'
+     * @param {string} seeAgain - options for the "See Again" button: 'same', 'similar', 'off'
      * @param {int} waitTimeLimit - maximum wait time
      * @param {int} fixationPeriod - duration of fixation period
      * @param {int} dotPeriod

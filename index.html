@@ -49,6 +49,7 @@
     <script src="scripts/jpsych/jspsych-message-splash.js"></script>
     <script src="scripts/jpsych/jspsych-partner-message1.js"></script>
     <script src="scripts/jpsych/jspsych-partner-message2.js"></script>
+    <script src="scripts/jpsych/jspsych-notice-onepage.js"></script>
     <script src="scripts/jpsych/jspsych-notice.js"></script>
     <script src="scripts/jpsych/jspsych-PIS.js"></script>
     <script src="scripts/jpsych/jspsych-score-reveal.js"></script>
@@ -205,8 +206,8 @@
     var dots_totalTrials = 0;
     var dots_totalCorrect = 0;
     var dots_jointTotalCorrect = 0;
-    var dots_blockCount = 0;
-    var dotsBlockCounter = 0;
+    var dots_blockCount = -1;
+    var dotsBlockCounter = -1;
     var staircaseSteps = 0;
     var dots_cumulativeScore = 0;
     var dots_overallAccuracy = 0;
@@ -214,10 +215,13 @@
     var accuracy = 0;
     var participantAccu;
     var partnerAccu;
+    var participantChosen = 0;
+    var partnerChosen = 0;
     var partner;
-    var trialsPerBlock = 20; //make trial count 20 here (5x20 trials = 100 trials per partner)
+    var trialsPerBlock = 25; //make trial count 25 here (4x25 trials = 100 trials per partner with info seeking)
     var dotCountHigherList = [];
     var finalHigh;
+    var secondChoice;
 
     var bonusPayment = 0;
 
@@ -262,6 +266,7 @@
         dots_isCorrect: [],
         dots_jointCorrect: [],
         dots_partnerCorrect: [],
+        dots_participantCorrect: [],
         dots_RTs: [],
         dots_waitTimes: [],
 
@@ -316,10 +321,10 @@
         rightColor: 'rgb(255,255,255)',
         waitTimeLimit: 2000,
         isTutorialMode: true,
-        trial_count: 10,             //make trial count 100 here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        trial_count: 100,             //make trial count 100 here
         yellowButtonEnabled: false,
         greenButtonName: 'CONTINUE',
-        seeAgain: 'practice1',
+        staircasingPractice: 'practice1',
         partner: 'none',
     };
 
@@ -335,7 +340,7 @@
         isTutorialMode: true,
         trial_count: 5,                 //make trial count 5 here
         greenButtonName: 'CONTINUE',
-        seeAgain: 'easier',
+        staircasingPractice: 'off',
         partner: 'none'
     };
 
@@ -354,7 +359,7 @@
         yellowButtonName: 'SEE AGAIN',
         greenButtonEnabled: true,
         greenButtonName: 'FINAL DECISION',
-        seeAgain: 'easier',
+        staircasingPractice: 'off',
         partner: 'underconfident'
     };
 
@@ -374,7 +379,7 @@
         yellowButtonName: 'SEE AGAIN',
         greenButtonEnabled: true,
         greenButtonName: 'FINAL DECISION',
-        seeAgain: 'easier',
+        staircasingPractice: 'off',
         partner: 'overconfident'
     };
 
@@ -405,14 +410,27 @@
     var dotTaskStart = {
         type: 'jspsych-notice',
         section1_text: 'You have now completed the first two phases of the dot game.',
-        section2_text: 'For the rest of the experiment, you\'ll be doing the task you just practiced. However, from now on you will see the response of another past participant for the same dots-grid. Your partner did about as well as you did in the practice trials. <br><br><highlight style="color: rgb(13,255,146)">You will earn points depending on whether your response is correct and how accurate your confidence judgment was.</highlight> At the end of the game, we will take all trials where you indicated, for example, a confidence of 70-80% and check if in fact 70-80% of those trials were correct. The closer your confidence judgements align with your actual accuracy, the higher your cash bonus will be at the end of the experiment, so <highlight style="color: rgb(13,255,146)">you will earn more with more accurate confidence judgements</highlight>.',
+        section2_text: 'For the rest of the experiment, you\'ll be doing the task you just practiced. However, from ' +
+            'now on you will see the response of another past participant for the same dots-grid. Your partner did about as ' +
+            'well as you did in the practice trials. <br><br><highlight style="color: rgb(13,255,146)">You will earn points ' +
+            'depending on whether your response is correct and how accurate your confidence judgment was.</highlight> At the ' +
+            'end of the game, we will take all trials where you indicated, for example, a confidence of 70-80% and check if ' +
+            'in fact 70-80% of those trials were correct. The closer your confidence judgements align with your actual accuracy, ' +
+            'the higher your cash bonus will be at the end of the experiment, so <highlight style="color: rgb(13,255,146)">you ' +
+            'will earn more with more accurate confidence judgements.</highlight><br><br>There will be 10 blocks of ' + trialsPerBlock + ' trials, ' +
+            'which should take approximately 30 minutes to complete altogether. Press "continue" to continue to the first block of ' + trialsPerBlock + ' trials.',
         img_id: 'dotTask-gif3'
     };
 
     var dotTaskStartInfoSeeking = {
         type: 'jspsych-notice',
-        section1_text: 'Sometimes you are on your own.',
-        section2_text: 'Every now and then, there will be trials where you are <highlight style="color: rgb(13,255,146)">on your own</highlight>. In those trials, there won\'t be a response from the other participant. However, on those trials you will have the <highlight style="color: rgb(13,255,146)">chance to see the dots-grid again</highlight> before committing to a final decision. <br><br>There will be 10 blocks of 20 trials, which should take approximately 25 minutes to complete altogether. Press "continue" to continue to the first block of 20 trials',
+        section1_text: 'We\'re now going to make an addition to the task.',
+        section2_text: 'Every now and then, there will be trials where you will <highlight style="color: rgb(13,255,146)">not find out your partner\'s decision</highlight>. ' +
+            'Instead, after you\'ve seen ' +
+            'the dots-grid and made your first decision, you\'ll have the <highlight style="color: rgb(13,255,146)">opportunity to see the dots-grid again</highlight> before ' +
+            'making your final decision. ' +
+            'If you choose to see the stimulus again, you\'ll see an <highlight style="color: rgb(13,255,146)">easier version of the grid with the same correct answer</highlight> (left or right).  ' +
+            'You don\'t have to see the stimulus again.  If you prefer, you can skip straight on to the next trial after your first decision.',
         img_id: 'dotTask-gif4'
     };
 
@@ -509,12 +527,12 @@
     switch(trialTypeOrder) {
 
         case 'all':
-            if (partnerOrder > 0.499999999999) {
+            if (partnerOrder > 0.5) {
                 var order;
                 order = "underconfident, then overconfident";
                 dataObject["experiment_condition"] = order;
                 var timeline = [
-                    //loading,
+                    // loading,
                     PIS,
                     consent,
                     demographics,
@@ -523,11 +541,11 @@
                     dotTaskInstructions2,
                     dotTaskPractice2,
                     dotTaskStart,
-                    dotTaskStartInfoSeeking,
                     loadingPartner,
                     partner1,
                     dotTask1,
                     dotTaskRest,
+                    dotTaskStartInfoSeeking,
                     dotTask1,
                     dotTaskRest,
                     dotTask1,
@@ -542,6 +560,7 @@
                     partner2,
                     dotTask2,
                     dotTaskRest,
+                    dotTaskStartInfoSeeking,
                     dotTask2,
                     dotTaskRest,
                     dotTask2,
@@ -561,7 +580,7 @@
                 order = "overconfident, then underconfident";
                 dataObject["experiment_condition"] = order;
                 var timeline = [
-                    //loading,
+                    // loading,
                     PIS,
                     consent,
                     demographics,
@@ -570,11 +589,11 @@
                     dotTaskInstructions2,
                     dotTaskPractice2,
                     dotTaskStart,
-                    dotTaskStartInfoSeeking,
                     loadingPartner,
                     partner1,
                     dotTask2,
                     dotTaskRest,
+                    dotTaskStartInfoSeeking,
                     dotTask2,
                     dotTaskRest,
                     dotTask2,
@@ -589,6 +608,7 @@
                     partner2,
                     dotTask1,
                     dotTaskRest,
+                    dotTaskStartInfoSeeking,
                     dotTask1,
                     dotTaskRest,
                     dotTask1,
@@ -609,14 +629,22 @@
         case 'testing':
             if (partnerOrder > 0.5) {
                 var timeline = [
-                    dotTaskStart,
-                    dotTask1,
+                    //dotTaskPractice1,
+                    //dotTaskStart,
+                    //dotTaskPractice1,
+                    dotTaskStartInfoSeeking,
+                    dotTask2,
+                    dotTaskRest,
                     thankYou
                 ];
             } else {
                 var timeline = [
-                    dotTaskStart,
-                    dotTask1,
+                    //dotTaskPractice1,
+                    //dotTaskStart,
+                    //dotTaskPractice1,
+                    dotTaskStartInfoSeeking,
+                    dotTask2,
+                    dotTaskRest,
                     thankYou
                 ];
             }

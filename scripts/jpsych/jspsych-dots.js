@@ -56,17 +56,17 @@ jsPsych.plugins['jspsych-dots'] = (function () {
         default: false,
         description: 'Show percentage for confidence slider?'
       },
-      seeAgain: {
+      staircasingPractice: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: '"See Again" options',
-        default: 'easier',
+        default: 'off',
         description: 'Describes what the "See Again" option presents: the exact same matrix ("same"), a same-count but differently distributed matrix ("similar"), or a different matrix ("easier").'
       },
       waitTimeLimit: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Wait time limit',
         default: Infinity,
-        description: 'Optional parameter to set a wait time limit for the next trial on a SeeAgain trial.'
+        description: 'Optional parameter to set a wait time limit for the next trial on a staircasingPractice trial.'
       },
       trial_count: {
         type: jsPsych.plugins.parameterType.INT,
@@ -194,7 +194,7 @@ jsPsych.plugins['jspsych-dots'] = (function () {
       dots_tooltipLabels,
       dots_endLabels,
       trial.showPercentage,
-      trial.seeAgain,
+      trial.staircasingPractice,
       trial.waitTimeLimit,
       fixationPeriod,
       dotPeriod,

@@ -2,8 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3df47766-bd0d-44d8-9d5e-755754b7705f" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/scripts/jpsych/jspsych-notice-onepage.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/dots-try.js" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/dots-try.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/dots.js" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/dots.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/jpsych/jspsych-dots.js" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/jpsych/jspsych-dots.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,11 +50,15 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/scripts/jpsych" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/scripts/jspsych" />
     <property name="settings.editor.selected.configurable" value="web.server" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\xampp\htdocs\DotTaskNonStrategic\scripts\jpsych" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\xampp\htdocs\DotTaskNonStrategic\scripts\jspsych\" />
       <recent name="C:\xampp\htdocs\DotTask\scripts\jpsych" />
     </key>
   </component>
@@ -169,6 +177,8 @@
       <workItem from="1613391546285" duration="115000" />
       <workItem from="1613391974394" duration="571000" />
       <workItem from="1613392587811" duration="22000" />
+      <workItem from="1613397034318" duration="743000" />
+      <workItem from="1613833164951" duration="6566000" />
     </task>
     <servers />
   </component>
@@ -179,9 +189,9 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="463" y="144" width="609" height="536" key="find.popup" timestamp="1613391620139">
+    <state x="463" y="144" width="738" height="606" key="find.popup" timestamp="1614019776806">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="463" y="144" width="609" height="536" key="find.popup/0.0.1536.824/-1920.0.1920.1160@0.0.1536.824" timestamp="1613391620139" />
+    <state x="463" y="144" width="738" height="606" key="find.popup/0.0.1536.824/-1920.0.1920.1160@0.0.1536.824" timestamp="1614019776806" />
   </component>
 </project>
