@@ -326,7 +326,7 @@
         rightColor: 'rgb(255,255,255)',
         waitTimeLimit: 2000,
         isTutorialMode: true,
-        trial_count: 100,             //make trial count 100 here
+        trial_count: 5,             //make trial count 100 here
         yellowButtonEnabled: false,
         greenButtonName: 'CONTINUE',
         staircasingPractice: 'practice1',
@@ -392,15 +392,21 @@
     var dotTaskInstructions1 = {
         type: 'jspsych-notice',
         section1_text: 'In this experiment, you will be playing a game with dots.',
-        section2_text: 'During this game, you will see two boxes containing dots briefly flash on either side of the centre of the screen (marked with a "+" sign). Your task is to decide whether the left or right box contains more dots. If you think the left box contained more dots, you respond with a <u>left mouse-click</u>. If you think the right box contained more dots, you respond with a <u>right mouse-click</u>. The task will start off quite easy <u>but will become harder</u> as you progress. ' +
-            '<br><br> Press the "continue" button to start the game. <u>The first phase of the game can take up to 8 minutes.</u> You should reach a stable performance level to continue to the next phase.',
+        section2_text: 'During this game, you will see two boxes containing dots briefly flash on either side of the centre of the screen (marked with a "+" sign). ' +
+            'Your task is to decide whether the left or right box contains more dots. If you think the left box contained more dots, you respond with ' +
+            'a <highlight style="color: rgb(13,255,146)">left mouse-click</highlight>. If you think the right box contained more dots, you respond with a <highlight style="color: rgb(13,255,146)">right ' +
+            'mouse-click</highlight>. The task will start off quite easy <highlight style="color: rgb(13,255,146)">but will become harder</highlight> as you progress. ' +
+            '<br><br> Press the "continue" button to start the game. <highlight style="color: rgb(13,255,146)">The first phase of the game can take up to 8 minutes.</highlight> You should reach a stable performance level to continue to the next phase.',
         img_id: 'dotTask-gif1'
     };
 
     var dotTaskInstructions2 = {
         type: 'jspsych-notice',
         section1_text: 'From now on, you will indicate your confidence in your decisions.',
-        section2_text: 'After responding with a left or right click, you will now <u>indicate your confidence</u> in the decision <u>on a sliding scale</u>. Hover over the slider bar to change the slider position - towards the middle if you aren\'t sure of your answer, and towards the left/right side if you\'re confident that the respective side is the correct answer - then click on the slider bar to register your confidence rating. ' +
+        section2_text: 'After responding with a left or right click, you will now <highlight style="color: rgb(13,255,146)">indicate your confidence</highlight> in the ' +
+            'decision <highlight style="color: rgb(13,255,146)">on a sliding scale</highlight>. Hover over the slider bar to change the slider position - towards the middle ' +
+            'if you aren\'t sure of your answer, and towards the left/right side if you\'re confident that the respective side is the correct answer - then click on ' +
+            'the slider bar to register your confidence rating. ' +
             ' <br><br>Press the "continue" button to do a few trials with the confidence slider.',
         img_id: 'dotTask-gif2'
     };
@@ -408,7 +414,12 @@
     var dotTaskInstructions3 = {
         type: 'jspsych-notice',
         section1_text: 'Great! You are half-way through. For the second half you will be paired with a different partner',
-        section2_text: 'Based on your responses, we will select another participant who did about as well as you did on the dot task. Different partner, same rules: After responding with a left or right click and indicating your confidence on the slider, you will see the your partner\'s response for the same dots-grid. <br><br><highlight style="color: rgb(13,255,146)">You will earn points depending on whether your response is correct and how accurate your confidence judgment was.</highlight> At the end of the game, we will take all trials where you indicated, for example, a confidence of 70-80% and check if in fact 70-80% of those trials were correct. The closer your confidence judgements align with your actual accuracy, the higher your cash bonus will be at the end of the experiment, so <highlight style="color: rgb(13,255,146)">you will earn more with more accurate confidence judgements</highlight>. <br><br>Press the "continue" button to do 5 more blocks of the dot task.',
+        section2_text: 'Based on your responses, we will select another participant who did about as well as you did on the dot task. Different partner, ' +
+            'same rules: After responding with a left or right click and indicating your confidence on the slider, you will see the your partner\'s response ' +
+            'for the same dots-grid. <br><br><highlight style="color: rgb(13,255,146)">You will earn points depending on whether your response is correct and ' +
+            'how accurate your confidence judgment was.</highlight> At the end of the game, we will take all trials where you indicated, for example, a ' +
+            'confidence of 70-80% and check if in fact 70-80% of those trials were correct. The closer your confidence judgements align with your actual accuracy, ' +
+            'the higher your cash bonus (up to £5) will be at the end of the experiment, so <highlight style="color: rgb(13,255,146)">you will earn more with more accurate confidence judgements</highlight>. <br><br>Press the "continue" button to do 5 more blocks of the dot task.',
         img_id: 'dotTask-gif3'
     };
 
@@ -421,7 +432,7 @@
             'depending on whether your response is correct and how accurate your confidence judgment was.</highlight> At the ' +
             'end of the game, we will take all trials where you indicated, for example, a confidence of 70-80% and check if ' +
             'in fact 70-80% of those trials were correct. The closer your confidence judgements align with your actual accuracy, ' +
-            'the higher your cash bonus will be at the end of the experiment, so <highlight style="color: rgb(13,255,146)">you ' +
+            'the higher your cash bonus (up to £5) will be at the end of the experiment, so <highlight style="color: rgb(13,255,146)">you ' +
             'will earn more with more accurate confidence judgements.</highlight><br><br>There will be 10 blocks of ' + trialsPerBlock + ' trials, ' +
             'which should take approximately 30 minutes to complete altogether. Press "continue" to continue to the first block of ' + trialsPerBlock + ' trials.',
         img_id: 'dotTask-gif3'
@@ -435,7 +446,8 @@
             'the dots-grid and made your first decision, you\'ll have the <highlight style="color: rgb(13,255,146)">opportunity to see the dots-grid again</highlight> before ' +
             'making your final decision. ' +
             'If you choose to see the stimulus again, you\'ll see an <highlight style="color: rgb(13,255,146)">easier version of the grid with the same correct answer</highlight> (left or right).  ' +
-            'You don\'t have to see the stimulus again.  If you prefer, you can skip straight on to the next trial after your first decision.',
+            'You don\'t have to see the stimulus again.  If you prefer, you can skip straight on to the next trial after your first decision.' +
+            'On these trials, your cash bonus will be based on the accuracy of your final decision.',
         img_id: 'dotTask-gif4'
     };
 

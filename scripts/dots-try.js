@@ -30,7 +30,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
     var correctResponse;
     //var jointCorrectResponse;
     var partnerCorrectResponse;
-    var participantCorrectResponse;
+    //var participantCorrectResponse;
     var sliderActive = true;
     var seeMore = false;  // set to true when more info is sought and the stimuli are shown a second time
     var start_timer;
@@ -343,10 +343,10 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                 //use initial response rather than confidence rating to for "correct response" as fed into function when continue button is clicked
                 if (initialChoice === majoritySide) {
                     correctResponse = true;
-                    participantCorrectResponse = NaN; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
+                    //participantCorrectResponse = NaN; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
                 } else {
                     correctResponse = false;
-                    participantCorrectResponse = NaN; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
+                    //participantCorrectResponse = NaN; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
                 }
                 //automatically trigger click on continue button
                 setTimeout(function () {
@@ -501,7 +501,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                 // }, 700);
 
                 //partners response not included in their accuracy percentage
-                participantCorrectResponse = NaN; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
+                //participantCorrectResponse = NaN; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
                 partnerCorrectResponse = NaN;
                 //jointCorrectResponse = NaN;
 
@@ -539,7 +539,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                 trialDataVariable['dots_isCorrect'].push(correctResponse);
                 //trialDataVariable['dots_jointCorrect'].push(jointCorrectResponse);// this is for calculating the bonus
                 trialDataVariable['dots_partnerCorrect'].push(partnerCorrectResponse);
-                trialDataVariable['dots_participantCorrect'].push(participantCorrectResponse);
+                //trialDataVariable['dots_participantCorrect'].push(participantCorrectResponse);
                 //dots_jointTotalCorrect += trialDataVariable.dots_jointCorrect.filter(Boolean).length;
                 trialDataVariable['dots_pairs'].push(JSON.stringify(dotPairs));
                 trialDataVariable['dots_confidences'].push(dotConfidences);
@@ -819,10 +819,10 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
 
                         if (invertedConfidence > 50) {
                             correctResponse = true;
-                            participantCorrectResponse = true; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
+                            //participantCorrectResponse = true; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
                         } else {
                             correctResponse = false;
-                            participantCorrectResponse = false; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
+                            //participantCorrectResponse = false; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
                         }
 
                         // if (!isTutorialMode && type == 'submit') {
@@ -834,10 +834,10 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
 
                         if (backendConfidence > 50) {
                             correctResponse = true;
-                            participantCorrectResponse = true; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
+                            //participantCorrectResponse = true; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
                         } else {
                             correctResponse = false;
-                            participantCorrectResponse = false; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
+                            //participantCorrectResponse = false; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
                         }
 
                         // if (!isTutorialMode && type == 'submit') {

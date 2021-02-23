@@ -159,14 +159,20 @@ jsPsych.plugins['jspsych-dots'] = (function () {
 
     // set confidence slider options
     var dots_tooltipLabels = [
-      'probably<br>LEFT',
-      'maybe<br>LEFT',
-      'maybe<br>RIGHT',
-      'probably<br>RIGHT'
+      '80% sure<br>LEFT',
+      '60% sure<br>LEFT',
+      '60% sure<br>RIGHT',
+      '80% sure<br>RIGHT'
+      // 'probably<br>LEFT',
+      // 'maybe<br>LEFT',
+      // 'maybe<br>RIGHT',
+      // 'probably<br>RIGHT'
     ];
     var dots_endLabels = [
-      '<div>certainly<br>LEFT</div>',
-      '<div>certainly<br>RIGHT</div>'
+      '<div>100% sure<br>LEFT</div>',
+      '<div>100% sure<br>RIGHT</div>'
+      // '<div>certainly<br>LEFT</div>',
+      // '<div>certainly<br>RIGHT</div>'
     ];
     var upperColor = trial.leftColor;
     var lowerColor = trial.rightColor;
