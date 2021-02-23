@@ -191,7 +191,7 @@ jsPsych.plugins['jspsych-demographics'] = (function () {
       dataObject['age'] = parseInt(participantAge, 10);
       dataObject['gender'] = participantGender;
       dataObject['handedness'] = participantHandedness;
-      dataObject['demographicsRTs'] = [ageRT, genderRT, handednessRT];
+      //dataObject['demographicsRTs'] = [ageRT, genderRT, handednessRT];
       dataObject['demographics_duration'] = totalRT;
       console.log(dataObject);
 

@@ -28,7 +28,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
     // default variables
     var backendConfidence;
     var correctResponse;
-    var jointCorrectResponse;
+    //var jointCorrectResponse;
     var partnerCorrectResponse;
     var participantCorrectResponse;
     var sliderActive = true;
@@ -50,9 +50,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
     if (infoSeekingVersion === false || dots_blockCount === 1 || dots_blockCount === 6) {
         infoSeekingTrial = false
     } else {
-        var randomiser = Math.random();
-        //set randomiser to the percentage of trials that you want to be info seeking trials
-        infoSeekingTrial = randomiser <= 0.3;
+        infoSeekingTrial = trialOrder[trialCounterVariable];
     }
 
     // prevent context menu from opening on right click (context menu on right click enabled in case of "testing")
@@ -539,10 +537,10 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                 //record trial data
                 trialDataVariable['dots_waitTimes'].push(waitTime);
                 trialDataVariable['dots_isCorrect'].push(correctResponse);
-                trialDataVariable['dots_jointCorrect'].push(jointCorrectResponse);// this is for calculating the bonus
+                //trialDataVariable['dots_jointCorrect'].push(jointCorrectResponse);// this is for calculating the bonus
                 trialDataVariable['dots_partnerCorrect'].push(partnerCorrectResponse);
                 trialDataVariable['dots_participantCorrect'].push(participantCorrectResponse);
-                dots_jointTotalCorrect += trialDataVariable.dots_jointCorrect.filter(Boolean).length;
+                //dots_jointTotalCorrect += trialDataVariable.dots_jointCorrect.filter(Boolean).length;
                 trialDataVariable['dots_pairs'].push(JSON.stringify(dotPairs));
                 trialDataVariable['dots_confidences'].push(dotConfidences);
                 trialDataVariable['initial_choices'].push(initialChoices);
@@ -565,20 +563,21 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                     setTimeout(function () {
 
                         // if there is no partner, accuracy is based on individual responses, otherwise its based on joint decision accuracy
-                        if (partner != "none") {
-                            accuracy = round(meanNaN(trialDataVariable['dots_jointCorrect']), 2) * 100;
-                            participantAccu = round(meanNaN(trialDataVariable['dots_isCorrect']), 2) * 100;
-                            partnerAccu = round(meanNaN(trialDataVariable['dots_partnerCorrect']), 2) * 100;
-                        } else {
-                            accuracy = round(mean(trialDataVariable['dots_isCorrect']), 2) * 100;
-                        }
+                        // if (partner != "none") {
+                        //     accuracy = round(meanNaN(trialDataVariable['dots_jointCorrect']), 2) * 100;
+                        //     participantAccu = round(meanNaN(trialDataVariable['dots_isCorrect']), 2) * 100;
+                        //     partnerAccu = round(meanNaN(trialDataVariable['dots_partnerCorrect']), 2) * 100;
+                        // } else {
+                        //     accuracy = round(mean(trialDataVariable['dots_isCorrect']), 2) * 100;
+                        // }
+                        accuracy = round(mean(trialDataVariable['dots_isCorrect']), 2) * 100;
 
                         //if we are in tutorial mode, practice trials need to be repeated in case accuracy is below accuracy threshold
                         if (isTutorialMode) {
                             if (accuracy >= accuracyThreshold) {
                                 var section4_button = 'CONTINUE';
                                 //var section4_text = 'Congratulations, your accuracy during the last set of trials was ' + accuracy + '%.';
-                                var section4_text = 'Congratulations, you are now ready to continue';
+                                var section4_text = 'Great, you are now ready to continue';
                             } else {
                                 var section4_button = 'REPEAT';
                                 //var section4_text = 'Your accuracy during these trials was ' + accuracy + '%, which is below the required accuracy threshold. Please click "repeat" below to repeat the practice round.';
@@ -634,7 +633,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                                     permanentDataVariable["partner_confidences"].push(trialDataVariable["partner_confidences"]);
                                     //permanentDataVariable["dots_moreAsked"].push(trialDataVariable["dots_moreAsked"]);
                                     permanentDataVariable["dots_isCorrect"].push(trialDataVariable["dots_isCorrect"]);
-                                    permanentDataVariable["dots_jointCorrect"].push(trialDataVariable["dots_jointCorrect"]);
+                                    //permanentDataVariable["dots_jointCorrect"].push(trialDataVariable["dots_jointCorrect"]);
                                     permanentDataVariable["dots_partnerCorrect"].push(trialDataVariable["dots_partnerCorrect"]);
                                     permanentDataVariable["dots_participantCorrect"].push(trialDataVariable["dots_participantCorrect"]);
                                     permanentDataVariable["dots_RTs"].push(trialDataVariable["dots_RTs"]);
@@ -669,7 +668,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                                     partner_confidences: [],
                                     dots_moreAsked: [],
                                     dots_isCorrect: [],
-                                    dots_jointCorrect: [],
+                                    //dots_jointCorrect: [],
                                     dots_partnerCorrect: [],
                                     dots_participantCorrect: [],
                                     dots_isTutorialMode: [],
@@ -697,7 +696,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                             permanentDataVariable["partner_confidences"].push(trialDataVariable["partner_confidences"]);
                             //permanentDataVariable["dots_moreAsked"].push(trialDataVariable["dots_moreAsked"]);
                             permanentDataVariable["dots_isCorrect"].push(trialDataVariable["dots_isCorrect"]);
-                            permanentDataVariable["dots_jointCorrect"].push(trialDataVariable["dots_jointCorrect"]);
+                            //permanentDataVariable["dots_jointCorrect"].push(trialDataVariable["dots_jointCorrect"]);
                             permanentDataVariable["dots_partnerCorrect"].push(trialDataVariable["dots_partnerCorrect"]);
                             permanentDataVariable["dots_participantCorrect"].push(trialDataVariable["dots_participantCorrect"]);
                             permanentDataVariable["dots_RTs"].push(trialDataVariable["dots_RTs"]);
@@ -710,6 +709,17 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                             // increase the block count
                             dots_totalCorrect += trialDataVariable.dots_isCorrect.filter(Boolean).length;
                             dots_blockCount++;
+
+                            //shuffle array that determines where the info seeking trials are
+                            //for the first info seeking block with each partner (blocks 2 & 7) we keep the pre-determined list with false, false, true in the beginning
+                            if (dots_blockCount === 2 || dots_blockCount === 7 ) {
+                                infoSeekingTrialRandomisation = shuffle(infoSeekingTrialRandomisation);
+                                trialOrder = trialOrderInit.concat(infoSeekingTrialRandomisation);
+                            } else {
+                                trialOrder= shuffle(trialOrder);
+                            }
+
+
 
                             // enable the cursor for the whole screen
                             $('body').css('cursor', 'auto');
@@ -815,9 +825,9 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                             participantCorrectResponse = false; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
                         }
 
-                        if (!isTutorialMode && type == 'submit') {
-                            dots_cumulativeScore += reverseBrierScore(invertedConfidence, correctResponse); //this is false for the joint decision making but I don't use Brier Score anyways
-                        }
+                        // if (!isTutorialMode && type == 'submit') {
+                        //     dots_cumulativeScore += reverseBrierScore(invertedConfidence, correctResponse); //this is false for the joint decision making but I don't use Brier Score anyways
+                        // }
                     } else {
                         participantConfidenceCorrect = backendConfidence;
                         dotConfidences = backendConfidence;
@@ -830,9 +840,9 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                             participantCorrectResponse = false; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
                         }
 
-                        if (!isTutorialMode && type == 'submit') {
-                            dots_cumulativeScore += reverseBrierScore(backendConfidence, correctResponse);
-                        }
+                        // if (!isTutorialMode && type == 'submit') {
+                        //     dots_cumulativeScore += reverseBrierScore(backendConfidence, correctResponse);
+                        // }
                     }
                 }
             }

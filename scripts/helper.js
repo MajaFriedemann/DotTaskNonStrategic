@@ -421,6 +421,34 @@ function returnMinimum(value, minimum_value) {
   }
 }
 
+
+ /* shuffles an array */
+ function shuffleArray(array) {
+   for (let i = array.length - 1; i > 0; i--) {
+     const j = Math.floor(Math.random() * (i + 1));
+     [array[i], array[j]] = [array[j], array[i]];
+   }
+ }
+
+ /* creates array of booleans with specified number of trues/falses */
+ function booleanList(length, trues) {
+   // Creation
+   let a = [];
+   //Filling with falses
+   for (let n = 0; n < length-trues; ++n) {
+     a[n] = false;
+   }
+   //Filling with trues
+   for (let n = length-trues; n < length; ++n) {
+     a[n] = true;
+   }
+   //Shuffle array
+   shuffleArray(a);
+   //Return array
+   return a;
+ }
+
+
 /* rounds to a specified number of decimal places */
 function round(value, decimals) {
   return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);

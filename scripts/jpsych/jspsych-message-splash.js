@@ -90,9 +90,9 @@ jsPsych.plugins['jspsych-message-splash'] = (function () {
     $.scrollify.destroy();
 
     // add some default text
-    var dotRestMessageBrier = 'You have reached the end of block ' + dots_blockCount + ' of 10. Your joint accuracy on this last block was ' + dataObject.dots_accuracy[dots_blockCount + 1] + '%, and you currently have ' + Math.round(dots_cumulativeScore) + ' points.';
+    var dotRestMessageBrier = 'You have reached the end of block ' + (dots_blockCount-1) + ' of 10. Your joint accuracy on this last block was ' + dataObject.dots_accuracy[dots_blockCount + 1] + '%, and you currently have ' + Math.round(dots_cumulativeScore) + ' points.';
 
-    var dotRestMessageFlat = 'You have reached the end of block ' + dots_blockCount + ' of 10.';
+    var dotRestMessageFlat = 'You have reached the end of block ' + (dots_blockCount-1) + ' of 10.';
 
     // create the page elements
     var splashPage = createGeneral(

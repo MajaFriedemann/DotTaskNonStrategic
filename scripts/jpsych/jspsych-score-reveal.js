@@ -46,7 +46,7 @@ jsPsych.plugins['jspsych-score-reveal'] = (function () {
       accurate += dataObject["dots_accuracy"][block];
     }
     accurate += accuracy;   //for the last block as this has not yet been pushed to the dataObject
-    dots_jointOverallAccuracy = accurate / 4;
+    //dots_jointOverallAccuracy = accurate / 4;
 
     switch(trial.performanceType) {
       case 'accuracy':
