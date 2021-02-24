@@ -215,13 +215,14 @@
     var accuracy = 0;
     //var participantAccu;
     //var partnerAccu;
-    var participantChosen = 0;
-    var partnerChosen = 0;
+    //var participantChosen = 0;
+    //var partnerChosen = 0;
     var partner;
     var trialsPerBlock = 25; //make trial count 25 here (4x25 trials = 100 trials per partner with info seeking)
     var dotCountHigherList = [];
     var finalHigh;
     var secondChoice;
+    var changeOfMind;
 
     var bonusPayment = 0;
     var infoSeekingTrialProportion = 0.3; //30% info seeking trials
@@ -231,8 +232,6 @@
 
 
     var dataObject = {
-        trial_count: [],
-        block_count: [],
         subjectID: subjectID,
         prolificID: ProlificID,
         experiment_version: version,
@@ -255,25 +254,37 @@
         age: undefined,
         gender: undefined,
         handedness: undefined,
-        //demographicsRTs: [],
         demographics_duration: 0,
 
-        dots_accuracy: [],
-        //dots_isTutorialMode: [],
+        trial_count: [],
+        block_count: [],
+        block_accuracy: [],
+        isTutorialMode: [],
         dots_staircase: [],
-        dots_majoritySide: [],
-        dots_confidences: [],
+        majoritySide: [],
         initial_choices: [],
+        participant_confidence: [],
         partner_confidences: [],
+        //participant_chosen: [], //!!!!!!!!!!
         dots_pairs: [],
-        //dots_defaultOption: [],
-        //dots_moreAsked: [],
         dots_isCorrect: [],
         //dots_jointCorrect: [],
         dots_partnerCorrect: [],
         dots_participantCorrect: [],
+        info_trial: [], //!!!!!!!!!
+        asked_more: [], //!!!!!!!
+        dots_pairs_second: [], //!!!!!!
+        second_choices: [], //!!!!!!!!!!
+        change_of_mind: [], //!!!!!!
+
         dots_RTs: [],
+        confidence_RTs: [],
+        dots_second_RTs: [],
+        info_choice_RTs: [],
         dots_waitTimes: [],
+
+        score: undefined, //!!!
+        bonus: undefined, //!!!!!!!!!
 
         technical_issues: undefined,
         feedback_technical: undefined,
@@ -326,7 +337,7 @@
         rightColor: 'rgb(255,255,255)',
         waitTimeLimit: 2000,
         isTutorialMode: true,
-        trial_count: 5,             //make trial count 100 here
+        trial_count: 100,             //make trial count 100 here
         yellowButtonEnabled: false,
         greenButtonName: 'CONTINUE',
         staircasingPractice: 'practice1',

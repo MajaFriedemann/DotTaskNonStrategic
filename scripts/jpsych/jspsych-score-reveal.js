@@ -43,7 +43,7 @@ jsPsych.plugins['jspsych-score-reveal'] = (function () {
     //
     // var accurate = 0;
     // for (var block=3; block <=5; block++) {
-    //   accurate += dataObject["dots_accuracy"][block];
+    //   accurate += dataObject["block_accuracy"][block];
     // }
     // accurate += accuracy;   //for the last block as this has not yet been pushed to the dataObject
     // //dots_jointOverallAccuracy = accurate / 4;

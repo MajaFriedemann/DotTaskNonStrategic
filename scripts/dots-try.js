@@ -35,19 +35,23 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
     var seeMore = false;  // set to true when more info is sought and the stimuli are shown a second time
     var start_timer;
     var dotPairs;
+    var dotPairsSecond;
     var dotConfidences;
-    var initialChoices;
+    var initialChoice;
     var partnerConfidences;
-    var dotRTs;
-    var choice_timer;
-    var confidence_timer;
+    var start_timer;
+    var end_timer;
+    var dotRTs; //reaction time for first dot decision
+    var confidenceRTs; //reaction time until confidence is indicated
+    var dotsSecondRTs; //reaction time for second dot decision in info seeking trials
+    var infoChoiceRTs; //reaction time until choice between see more or final decision is made
     var accuracyThreshold = 60;  //threshold for practice trials (if we are in tutorialmode)
 
     //if we are in the infoSeekingVersion, then determine if this trial will be an infoSeekingTrial
     //when blockCount=1 it means we are in the first block with partner 1 and we don't want info seeking trials
     //when blockCount=6 it means we are in the first block with partner 2 and we don't want info seeking trials
     var infoSeekingTrial;
-    if (infoSeekingVersion === false || dots_blockCount === 1 || dots_blockCount === 6) {
+    if (infoSeekingVersion === false || dots_blockCount === 1 || dots_blockCount === 6 || isTutorialMode===true) {
         infoSeekingTrial = false
     } else {
         infoSeekingTrial = trialOrder[trialCounterVariable];
@@ -89,7 +93,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
         dots = [high, low];
         majoritySide = 'left';
     }
-    trialDataVariable['dots_majoritySide'].push(majoritySide) ;
+    trialDataVariable['majoritySide'].push(majoritySide) ;
     dotPairs = dots;
 
 
@@ -273,16 +277,14 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
 
 
     // left or right mouse-click for decision
-    var initialChoice;
     $(document).on('mousedown', function (event) {
 
         // turn off this event handler
         $(document).off('mousedown');
 
         // record the reaction time
-        choice_timer = Date.now();
-        var RT = calculateRT(start_timer, choice_timer);
-        dotRTs = RT;
+        end_timer = Date.now();
+        dotRTs = calculateRT(start_timer, end_timer);
 
         //skip some of the steps if we are in practice1 which is only used for staircasing (if (staircasingPractice != "practice1"))
 
@@ -324,29 +326,18 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
             }
 
 
-            //record if initial response (via mouse click) was correct or false
-            var response;
-            if (initialChoice == majoritySide) {
-                response = "correct"
-            } else {
-                response = "false"
-            }
-            initialChoices = response;
-
-
             // make response area visible
             if (staircasingPractice !== "practice1") {
                 $('.confidence-question').css('visibility', 'visible');
                 document.getElementById("confidence-question").innerHTML = "<h1>Indicate your confidence with the slider below</h1>";
                 $('.response-area').css('visibility', 'visible');
+                start_timer = Date.now();
             } else {
                 //use initial response rather than confidence rating to for "correct response" as fed into function when continue button is clicked
                 if (initialChoice === majoritySide) {
                     correctResponse = true;
-                    //participantCorrectResponse = NaN; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
                 } else {
                     correctResponse = false;
-                    //participantCorrectResponse = NaN; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
                 }
                 //automatically trigger click on continue button
                 setTimeout(function () {
@@ -368,6 +359,9 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
             case 'seeMore':
                 seeMore = true;
 
+                end_timer = Date.now();
+                infoChoiceRTs = calculateRT(start_timer, end_timer);
+
                 // easier dot grid
                 // clear the grids
                 var dotCanvas = document.getElementById('jspsych-canvas-sliders-response-canvas');
@@ -378,7 +372,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
 
                 // update the dot difference
                 high = dotCount + Math.E ** (Math.log(dotsStaircase.getLast('logSpace')) + 0.5);
-                //high = round(high * 1.5);
+                high = round(high, 0);
                 console.log(high);
                 //keep the same correct response
                 if (majoritySide === "right") {
@@ -386,7 +380,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                 } else {
                     dots = [high, low];
                 }
-                dotPairs.push(dots);
+                dotPairsSecond = dots;
 
                 // SAVE THE NEW DOT PAIRS
 
@@ -418,6 +412,8 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                     });
                     gridNew.draw(canvasID);
 
+                    start_timer = Date.now();
+
                     setTimeout(function () {
                         $('.grid-mask').css('visibility', 'visible');
 
@@ -438,6 +434,10 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                     // turn off this event handler
                     $(document).off('mousedown');
 
+                    //record the reaction time
+                    end_timer = Date.now();
+                    dotsSecondRTs = calculateRT(start_timer, end_timer);
+
                     // highlight the chosen box
                     if (event.button === 0) {
                         secondChoice = "left";
@@ -453,7 +453,6 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
 
 
                     //record if second response was correct or false
-                    var changeOfMind;
                     changeOfMind = secondChoice !== initialChoice;
 
                     //show FINAL DECISION button
@@ -469,6 +468,12 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                 break;
 
             case 'finalDecision':
+                //if see more is true then this is not the choice time anymore but simply the point at which the only option of final decision is click
+                if (seeMore === false) {
+                    end_timer = Date.now();
+                    infoChoiceRTs = calculateRT(start_timer, end_timer);
+                }
+
                 //reset the button
                 $('.submit-button').on('click', function () {
                     buttonBackend('submit');
@@ -502,7 +507,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
 
                 //partners response not included in their accuracy percentage
                 //participantCorrectResponse = NaN; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
-                partnerCorrectResponse = NaN;
+                partnerCorrectResponse = undefined;
                 //jointCorrectResponse = NaN;
 
 
@@ -522,8 +527,8 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
 
 
                 // calculate the wait time (this is from stimulus presentation until clicking continue, whereas RT is from stimulus presentation to initial choice via mouse-lick
-                confidence_timer = Date.now();
-                var waitTime = calculateRT(start_timer, confidence_timer);
+                end_timer = Date.now();
+                var waitTime = calculateRT(start_timer, end_timer);
 
 
                 // clear the display on a timer
@@ -540,16 +545,22 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                 //trialDataVariable['dots_jointCorrect'].push(jointCorrectResponse);// this is for calculating the bonus
                 trialDataVariable['dots_partnerCorrect'].push(partnerCorrectResponse);
                 //trialDataVariable['dots_participantCorrect'].push(participantCorrectResponse);
-                //dots_jointTotalCorrect += trialDataVariable.dots_jointCorrect.filter(Boolean).length;
                 trialDataVariable['dots_pairs'].push(JSON.stringify(dotPairs));
-                trialDataVariable['dots_confidences'].push(dotConfidences);
-                trialDataVariable['initial_choices'].push(initialChoices);
+                trialDataVariable['participant_confidence'].push(dotConfidences);
+                trialDataVariable['initial_choices'].push(initialChoice);
                 trialDataVariable['partner_confidences'].push(partnerConfidences);
                 trialDataVariable['dots_RTs'].push(dotRTs);
-                //trialDataVariable['dots_isTutorialMode'].push(isTutorialMode);
+                trialDataVariable['isTutorialMode'].push(isTutorialMode);
                 trialCounterVariable++;
                 dots_totalTrials++;
                 trialDataVariable['trial_count'].push(dots_totalTrials);
+
+                //trialDataVariable['participant_chosen'].push(participant_chosen);
+                trialDataVariable['info_trial'].push(infoSeekingTrial);
+                trialDataVariable['asked_more'].push(seeMore);
+                trialDataVariable['dots_pairs_second'].push(JSON.stringify(dotPairsSecond));
+                trialDataVariable['second_choices'].push(secondChoice);
+                trialDataVariable['change_of_mind'].push(changeOfMind);
 
 
                 // if current trial-number is less than total trial-number, call the drawFixation function and begin new trial
@@ -574,6 +585,9 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
 
                         //if we are in tutorial mode, practice trials need to be repeated in case accuracy is below accuracy threshold
                         if (isTutorialMode) {
+                            partnerConfidence = undefined;
+                            partnerCorrectResponse = undefined;
+
                             if (accuracy >= accuracyThreshold) {
                                 var section4_button = 'CONTINUE';
                                 //var section4_text = 'Congratulations, your accuracy during the last set of trials was ' + accuracy + '%.';
@@ -624,21 +638,27 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                                 // we save the data
 
                                 $('#dots-tutorial-continue').on('click', function () {
-                                    permanentDataVariable["dots_accuracy"].push(accuracy);
+                                    permanentDataVariable["block_accuracy"].push(accuracy);
                                     permanentDataVariable["trial_count"].push(trialDataVariable["trial_count"]);
                                     permanentDataVariable["dots_pairs"].push(trialDataVariable["dots_pairs"]);
-                                    permanentDataVariable["dots_majoritySide"].push(trialDataVariable["dots_majoritySide"]);
-                                    permanentDataVariable["dots_confidences"].push(trialDataVariable["dots_confidences"]);
+                                    permanentDataVariable["majoritySide"].push(trialDataVariable["majoritySide"]);
+                                    permanentDataVariable["participant_confidence"].push(trialDataVariable["participant_confidence"]);
                                     permanentDataVariable["initial_choices"].push(trialDataVariable["initial_choices"]);
                                     permanentDataVariable["partner_confidences"].push(trialDataVariable["partner_confidences"]);
-                                    //permanentDataVariable["dots_moreAsked"].push(trialDataVariable["dots_moreAsked"]);
                                     permanentDataVariable["dots_isCorrect"].push(trialDataVariable["dots_isCorrect"]);
                                     //permanentDataVariable["dots_jointCorrect"].push(trialDataVariable["dots_jointCorrect"]);
                                     permanentDataVariable["dots_partnerCorrect"].push(trialDataVariable["dots_partnerCorrect"]);
-                                    permanentDataVariable["dots_participantCorrect"].push(trialDataVariable["dots_participantCorrect"]);
+                                    //permanentDataVariable["dots_participantCorrect"].push(trialDataVariable["dots_participantCorrect"]);
                                     permanentDataVariable["dots_RTs"].push(trialDataVariable["dots_RTs"]);
                                     permanentDataVariable["dots_waitTimes"].push(trialDataVariable["dots_waitTimes"]);
                                     permanentDataVariable["block_count"].push(dots_blockCount);
+
+                                    //permanentDataVariable["participant_chosen"].push(trialDataVariable["participant_chosen"]);
+                                    permanentDataVariable["info_trial"].push(trialDataVariable["info_trial"]);
+                                    permanentDataVariable["asked_more"].push(trialDataVariable["asked_more"]);
+                                    permanentDataVariable["dots_pairs_second"].push(trialDataVariable["dots_pairs_second"]);
+                                    permanentDataVariable["second_choices"].push(trialDataVariable["second_choices"]);
+                                    permanentDataVariable["change_of_mind"].push(trialDataVariable["change_of_mind"]);
 
                                     // increase the block count
                                     dots_blockCount++;
@@ -661,18 +681,24 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                                 // reset trial data variable
                                 trialDataVariable = {
                                     trial_count: [],
-                                    dots_pairs: [],
-                                    dots_majoritySide: [],
-                                    dots_confidences: [],
+                                    isTutorialMode: [],
+                                    dots_staircase: [],
+                                    majoritySide: [],
                                     initial_choices: [],
+                                    participant_confidence: [],
                                     partner_confidences: [],
-                                    dots_moreAsked: [],
+                                    //participant_chosen: [],
+                                    dots_pairs: [],
                                     dots_isCorrect: [],
                                     //dots_jointCorrect: [],
                                     dots_partnerCorrect: [],
-                                    dots_participantCorrect: [],
-                                    dots_isTutorialMode: [],
-                                    dots_firstIsCorrect: [],
+                                    //dots_participantCorrect: [],
+                                    info_trial: [],
+                                    asked_more: [],
+                                    dots_pairs_second: [],
+                                    second_choices: [],
+                                    change_of_mind: [],
+
                                     dots_RTs: [],
                                     dots_waitTimes: []
                                 };
@@ -686,22 +712,27 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                         } else {
                             // we save the data
 
-                            permanentDataVariable["dots_accuracy"].push(accuracy);
+                            permanentDataVariable["block_accuracy"].push(accuracy);
                             permanentDataVariable["trial_count"].push(trialDataVariable["trial_count"]);
-                            //permanentDataVariable["dots_isTutorialMode"].push(trialDataVariable["dots_isTutorialMode"]);
                             permanentDataVariable["dots_pairs"].push(trialDataVariable["dots_pairs"]);
-                            permanentDataVariable["dots_majoritySide"].push(trialDataVariable["dots_majoritySide"]);
-                            permanentDataVariable["dots_confidences"].push(trialDataVariable["dots_confidences"]);
+                            permanentDataVariable["majoritySide"].push(trialDataVariable["majoritySide"]);
+                            permanentDataVariable["participant_confidence"].push(trialDataVariable["participant_confidence"]);
                             permanentDataVariable["initial_choices"].push(trialDataVariable["initial_choices"]);
                             permanentDataVariable["partner_confidences"].push(trialDataVariable["partner_confidences"]);
-                            //permanentDataVariable["dots_moreAsked"].push(trialDataVariable["dots_moreAsked"]);
                             permanentDataVariable["dots_isCorrect"].push(trialDataVariable["dots_isCorrect"]);
                             //permanentDataVariable["dots_jointCorrect"].push(trialDataVariable["dots_jointCorrect"]);
                             permanentDataVariable["dots_partnerCorrect"].push(trialDataVariable["dots_partnerCorrect"]);
-                            permanentDataVariable["dots_participantCorrect"].push(trialDataVariable["dots_participantCorrect"]);
+                            //permanentDataVariable["dots_participantCorrect"].push(trialDataVariable["dots_participantCorrect"]);
                             permanentDataVariable["dots_RTs"].push(trialDataVariable["dots_RTs"]);
                             permanentDataVariable["dots_waitTimes"].push(trialDataVariable["dots_waitTimes"]);
                             permanentDataVariable["block_count"].push(dots_blockCount);
+
+                            //permanentDataVariable["participant_chosen"].push(trialDataVariable["participant_chosen"]);
+                            permanentDataVariable["info_trial"].push(trialDataVariable["info_trial"]);
+                            permanentDataVariable["asked_more"].push(trialDataVariable["asked_more"]);
+                            permanentDataVariable["dots_pairs_second"].push(trialDataVariable["dots_pairs_second"]);
+                            permanentDataVariable["second_choices"].push(trialDataVariable["second_choices"]);
+                            permanentDataVariable["change_of_mind"].push(trialDataVariable["change_of_mind"]);
 
                             saveCSV(subjectID, currentAttempt);
 
@@ -797,6 +828,10 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
 
         // when participant clicks on slider to indicate their confidence
         click: function () {
+
+            end_timer = Date.now();
+            confidenceRTs = calculateRT(start_timer, end_timer);
+
             //avoid double clicks by disabling click event for slider
             document.getElementById('scale-row').style.pointerEvents = 'none';
 
@@ -938,6 +973,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                 } else {
                     console.log(dotPairs);
                     $('.scale-button').removeClass('invisible');
+                    start_timer = Date.now();
                 }
             }
         },

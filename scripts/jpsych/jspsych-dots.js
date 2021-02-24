@@ -52,8 +52,8 @@ jsPsych.plugins['jspsych-dots'] = (function () {
         description: 'Colour for the right side of the confidence slider'
       },
       showPercentage: {
-        type: jsPsych.plugins.parameterType.BOOLEAN,
-        default: false,
+        type: jsPsych.plugins.parameterType.BOOL,
+        default: true,
         description: 'Show percentage for confidence slider?'
       },
       staircasingPractice: {
@@ -142,37 +142,44 @@ jsPsych.plugins['jspsych-dots'] = (function () {
 
     var tempStorage = {
       trial_count: [],
-      dots_pairs: [],
-      dots_majoritySide: [],
-      dots_confidences: [],
+      isTutorialMode: [],
+      dots_staircase: [],
+      majoritySide: [],
       initial_choices: [],
+      participant_confidence: [],
       partner_confidences: [],
-      dots_moreAsked: [],
+      //participant_chosen: [],
+      dots_pairs: [],
       dots_isCorrect: [],
       //dots_jointCorrect: [],
       dots_partnerCorrect: [],
-      dots_isTutorialMode: [],
-      dots_firstIsCorrect: [],
+      //dots_participantCorrect: [],
+      info_trial: [],
+      asked_more: [],
+      dots_pairs_second: [],
+      second_choices: [],
+      change_of_mind: [],
+
       dots_RTs: [],
-      dots_waitTimes: []
+      dots_waitTimes: [],
     };
 
     // set confidence slider options
     var dots_tooltipLabels = [
-      '80% sure<br>LEFT',
-      '60% sure<br>LEFT',
-      '60% sure<br>RIGHT',
-      '80% sure<br>RIGHT'
-      // 'probably<br>LEFT',
-      // 'maybe<br>LEFT',
-      // 'maybe<br>RIGHT',
-      // 'probably<br>RIGHT'
+      // '80% sure<br>LEFT',
+      // '60% sure<br>LEFT',
+      // '60% sure<br>RIGHT',
+      // '80% sure<br>RIGHT'
+      'probably<br>LEFT',
+      'maybe<br>LEFT',
+      'maybe<br>RIGHT',
+      'probably<br>RIGHT'
     ];
     var dots_endLabels = [
-      '<div>100% sure<br>LEFT</div>',
-      '<div>100% sure<br>RIGHT</div>'
-      // '<div>certainly<br>LEFT</div>',
-      // '<div>certainly<br>RIGHT</div>'
+      // '<div>100% sure<br>LEFT</div>',
+      // '<div>100% sure<br>RIGHT</div>'
+      '<div>certainly<br>LEFT</div>',
+      '<div>certainly<br>RIGHT</div>'
     ];
     var upperColor = trial.leftColor;
     var lowerColor = trial.rightColor;

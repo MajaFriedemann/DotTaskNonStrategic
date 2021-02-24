@@ -83,7 +83,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
     var dots = [high, low];
     var majoritySide = 'left';
   }
-  trialDataVariable['dots_majoritySide'].push(majoritySide);
+  trialDataVariable['majoritySide'].push(majoritySide);
   dotPairs.push(dots);
 
   // draw the grid
@@ -537,7 +537,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                     console.log(trialDataVariable);
                     permanentDataVariable["dots_accuracy"].push(accuracy);
                     permanentDataVariable["dots_pairs"].push(trialDataVariable["dots_pairs"]);
-                    permanentDataVariable["dots_majoritySide"].push(trialDataVariable["dots_majoritySide"]);
+                    permanentDataVariable["majoritySide"].push(trialDataVariable["majoritySide"]);
                     permanentDataVariable["dots_confidences"].push(trialDataVariable["dots_confidences"]);
                     permanentDataVariable["dots_moreAsked"].push(trialDataVariable["dots_moreAsked"]);
                     permanentDataVariable["dots_isCorrect"].push(trialDataVariable["dots_isCorrect"]);
@@ -559,7 +559,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                 permanentDataVariable["dots_accuracy"].push(accuracy);
                 permanentDataVariable["dots_isTutorialMode"].push(trialDataVariable["dots_isTutorialMode"]);
                 permanentDataVariable["dots_pairs"].push(trialDataVariable["dots_pairs"]);
-                permanentDataVariable["dots_majoritySide"].push(trialDataVariable["dots_majoritySide"]);
+                permanentDataVariable["majoritySide"].push(trialDataVariable["majoritySide"]);
                 permanentDataVariable["dots_confidences"].push(trialDataVariable["dots_confidences"]);
                 permanentDataVariable["dots_moreAsked"].push(trialDataVariable["dots_moreAsked"]);
                 permanentDataVariable["dots_isCorrect"].push(trialDataVariable["dots_isCorrect"]);
