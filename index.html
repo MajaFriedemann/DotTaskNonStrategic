@@ -115,9 +115,9 @@
 
     // seed the randomisations (whenever a random number is generated it is seeded to the subjectID so that it is reproducible)
     // removing all non-digits from string
-    var seed = subjectID.replace(/\D/g,'');
-    seed = parseInt(seed);
-    Math.seedrandom(seed);
+    // var seed = subjectID.replace(/\D/g,'');
+    // seed = parseInt(seed);
+    // Math.seedrandom(seed);
 
 
 
@@ -212,7 +212,7 @@
     //var dots_cumulativeScore = 0;
     //var dots_overallAccuracy = 0;
     //var dots_jointOverallAccuracy = 0;
-    var accuracy = 0;
+    var accuracy;
     //var participantAccu;
     //var partnerAccu;
     //var participantChosen = 0;
@@ -221,8 +221,6 @@
     var trialsPerBlock = 25; //make trial count 25 here (4x25 trials = 100 trials per partner with info seeking)
     var dotCountHigherList = [];
     var finalHigh;
-    var secondChoice;
-    var changeOfMind;
 
     var bonusPayment = 0;
     var infoSeekingTrialProportion = 0.3; //30% info seeking trials
@@ -258,7 +256,7 @@
 
         trial_count: [],
         block_count: [],
-        block_accuracy: [],
+        //block_accuracy: [],
         isTutorialMode: [],
         dots_staircase: [],
         majoritySide: [],
@@ -693,9 +691,9 @@
             // link up to Stitch with a promise
             var clientPromise = stitch.StitchClientFactory.create('uidmul-ist-sbgze');
             // add all experimental details to dataObject
-            dataObject["dots_staircase"] = dotsStaircase.get('logSpace');
+            //dataObject["dots_staircase"] = dotsStaircase.get('logSpace');
             //dataObject["dots_overallAccuracy"] = dots_overallAccuracy;
-            dataObject["bonus_earned"] = bonusPayment;
+            //dataObject["bonus_earned"] = bonusPayment;
             dataObject["date_completed"] = longformDate();
             dataObject["duration"] = testTime;
 
