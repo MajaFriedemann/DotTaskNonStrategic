@@ -33,7 +33,6 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
     //var participantCorrectResponse;
     var sliderActive = true;
     var seeMore;  // set to true when more info is sought and the stimuli are shown a second time
-    var start_timer;
     var dotPairs;
     var dotPairsSecond;
     var dotConfidences;
@@ -48,6 +47,8 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
     var accuracyThreshold = 60;  //threshold for practice trials (if we are in tutorialmode)
     var secondChoice;
     var changeOfMind;
+    var participantConfidenceCorrect;
+    var brierConfidence;
 
 
     //if we are in the infoSeekingVersion, then determine if this trial will be an infoSeekingTrial
@@ -467,6 +468,13 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
 
                     //record if second response was correct or false
                     changeOfMind = secondChoice !== initialChoice;
+                    if (secondChoice === majoritySide) {
+                        correctResponse = true;
+                    } else {
+                        correctResponse = false;
+                    }
+                    overallScore += reverseBrierScore(100, correctResponse);
+
 
                     //show FINAL DECISION button
                     $('.submit-button').css('margin-left', 0);
@@ -485,6 +493,8 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                 if (seeMore === false) {
                     end_timer = Date.now();
                     infoChoiceRTs = calculateRT(start_timer, end_timer);
+
+                    overallScore += reverseBrierScore(brierConfidence, correctResponse); //this is false for the joint decision making but I don't use Brier Score anyways
                 }
 
                 //reset the button
@@ -554,7 +564,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
 
                 //record trial data
                 trialDataVariable['dots_waitTimes'].push(waitTime);
-                trialDataVariable["dots_staircase"].push(dotsStaircase.get('logSpace'));
+                trialDataVariable["dots_staircase"].push(dotsStaircase.getLast('logSpace'));
                 trialDataVariable['dots_isCorrect'].push(correctResponse);
                 //trialDataVariable['dots_jointCorrect'].push(jointCorrectResponse);// this is for calculating the bonus
                 trialDataVariable['dots_partnerCorrect'].push(partnerCorrectResponse);
@@ -565,6 +575,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                 trialDataVariable['partner_confidences'].push(partnerConfidences);
                 trialDataVariable['dots_RTs'].push(dotRTs);
                 trialDataVariable['isTutorialMode'].push(isTutorialMode);
+                trialDataVariable['partner'].push(partner);
                 trialCounterVariable++;
                 dots_totalTrials++;
                 trialDataVariable['trial_count'].push(dots_totalTrials);
@@ -654,6 +665,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                                 $('#dots-tutorial-continue').on('click', function () {
                                     //permanentDataVariable["block_accuracy"].push(accuracy);
                                     permanentDataVariable["isTutorialMode"].push(trialDataVariable["isTutorialMode"]);
+                                    permanentDataVariable["partner"].push(trialDataVariable["partner"]);
                                     permanentDataVariable["dots_staircase"].push(trialDataVariable["dots_staircase"]);
                                     permanentDataVariable["trial_count"].push(trialDataVariable["trial_count"]);
                                     permanentDataVariable["dots_pairs"].push(trialDataVariable["dots_pairs"]);
@@ -698,6 +710,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                                 trialDataVariable = {
                                     trial_count: [],
                                     isTutorialMode: [],
+                                    partner: [],
                                     dots_staircase: [],
                                     majoritySide: [],
                                     initial_choices: [],
@@ -730,6 +743,7 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
 
                             //permanentDataVariable["block_accuracy"].push(accuracy);
                             permanentDataVariable["isTutorialMode"].push(trialDataVariable["isTutorialMode"]);
+                            permanentDataVariable["partner"].push(trialDataVariable["partner"]);
                             permanentDataVariable["dots_staircase"].push(trialDataVariable["dots_staircase"]);
                             permanentDataVariable["trial_count"].push(trialDataVariable["trial_count"]);
                             permanentDataVariable["dots_pairs"].push(trialDataVariable["dots_pairs"]);
@@ -859,7 +873,6 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
 
             // confidence is stored as "confidence in the correct answer"
             // i.e. if a person has confidence of 4% in their response but it is the incorrect one, this will be stored as 46% (confidence in the correct choice)
-            var participantConfidenceCorrect;
 
             function recordRating(backendConfidence, majoritySide, type) {
                 if (backendConfidence !== undefined) {
@@ -878,9 +891,6 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                             //participantCorrectResponse = false; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
                         }
 
-                        // if (!isTutorialMode && type == 'submit') {
-                        //     dots_cumulativeScore += reverseBrierScore(invertedConfidence, correctResponse); //this is false for the joint decision making but I don't use Brier Score anyways
-                        // }
                     } else {
                         participantConfidenceCorrect = backendConfidence;
                         dotConfidences = backendConfidence;
@@ -892,10 +902,16 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                             correctResponse = false;
                             //participantCorrectResponse = false; //participantCorrectResponse only counts group decision responses. correctResponse counts all responses.
                         }
+                    }
 
-                        // if (!isTutorialMode && type == 'submit') {
-                        //     dots_cumulativeScore += reverseBrierScore(backendConfidence, correctResponse);
-                        // }
+                    if (initialChoice === "left") {
+                        brierConfidence = 100 - backendConfidence;
+                    } else {
+                        brierConfidence = backendConfidence;
+                    }
+
+                    if (!isTutorialMode && !infoSeekingTrial) {
+                        overallScore += reverseBrierScore(brierConfidence, correctResponse); //this is false for the joint decision making but I don't use Brier Score anyways
                     }
                 }
             }

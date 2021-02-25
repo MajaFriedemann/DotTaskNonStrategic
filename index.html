@@ -85,7 +85,7 @@
     var release_date = '2021/02/23';
     var testing_timeline = false;
     var trialTypeOrder = 'all';          /* "testing" or "all"  |  for "testing" the right click context menu is enabled and the data will be downloaded as a csv file*/
-    var scoreRuleOrder = 'cumulative reward';
+    var scoreRuleOrder = 'brier';
     var cohort = 'PR';                      /*PR for prolific*/
     var CUREC_studyName = 'Contextual influences on metacognitive judgements';
     var CUREC_ID = 'R67369/RE001';
@@ -221,7 +221,7 @@
     var trialsPerBlock = 25; //make trial count 25 here (4x25 trials = 100 trials per partner with info seeking)
     var dotCountHigherList = [];
     var finalHigh;
-
+    var overallScore = 0;
     var bonusPayment = 0;
     var infoSeekingTrialProportion = 0.3; //30% info seeking trials
     var trialOrderInit = [false, false, true]; // first 3 trials are determined to be two non-info seeking and one info seeking
@@ -258,22 +258,23 @@
         block_count: [],
         //block_accuracy: [],
         isTutorialMode: [],
+        partner:[],
         dots_staircase: [],
         majoritySide: [],
         initial_choices: [],
         participant_confidence: [],
         partner_confidences: [],
-        //participant_chosen: [], //!!!!!!!!!!
+        //participant_chosen: [],
         dots_pairs: [],
         dots_isCorrect: [],
         //dots_jointCorrect: [],
         dots_partnerCorrect: [],
-        dots_participantCorrect: [],
-        info_trial: [], //!!!!!!!!!
-        asked_more: [], //!!!!!!!
-        dots_pairs_second: [], //!!!!!!
-        second_choices: [], //!!!!!!!!!!
-        change_of_mind: [], //!!!!!!
+        //dots_participantCorrect: [],
+        info_trial: [],
+        asked_more: [],
+        dots_pairs_second: [],
+        second_choices: [],
+        change_of_mind: [],
 
         dots_RTs: [],
         confidence_RTs: [],
@@ -281,8 +282,8 @@
         info_choice_RTs: [],
         dots_waitTimes: [],
 
-        score: undefined, //!!!
-        bonus: undefined, //!!!!!!!!!
+        score: undefined,
+        bonus: undefined,
 
         technical_issues: undefined,
         feedback_technical: undefined,
@@ -455,7 +456,7 @@
             'the dots-grid and made your first decision, you\'ll have the <highlight style="color: rgb(13,255,146)">opportunity to see the dots-grid again</highlight> before ' +
             'making your final decision. ' +
             'If you choose to see the stimulus again, you\'ll see an <highlight style="color: rgb(13,255,146)">easier version of the grid with the same correct answer</highlight> (left or right).  ' +
-            'You don\'t have to see the stimulus again.  If you prefer, you can skip straight on to the next trial after your first decision.' +
+            'You don\'t have to see the stimulus again.  If you prefer, you can skip straight on to the next trial after your first decision. ' +
             'On these trials, your cash bonus will be based on the accuracy of your final decision.',
         img_id: 'dotTask-gif4'
     };
@@ -502,7 +503,7 @@
 
     var dotsScoreReveal = {
         type: 'jspsych-score-reveal',
-        performanceType: 'Brier',
+        performanceType: 'brier',
         bonusThreshold: 60,
         flatBonusAmount: 1
     };
@@ -659,6 +660,10 @@
                     dotTaskStartInfoSeeking,
                     dotTask2,
                     dotTaskRest,
+                    dotTask2,
+                    dotTaskRest,
+                    dotTask2,
+                    dotTaskRest,
                     thankYou
                 ];
             } else {
@@ -667,6 +672,10 @@
                     //dotTaskStart,
                     //dotTaskPractice1,
                     dotTaskStartInfoSeeking,
+                    dotTask2,
+                    dotTaskRest,
+                    dotTask2,
+                    dotTaskRest,
                     dotTask2,
                     dotTaskRest,
                     thankYou
