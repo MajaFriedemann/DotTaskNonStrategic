@@ -143,7 +143,7 @@ jsPsych.plugins['jspsych-dots'] = (function () {
     var tempStorage = {
       trial_count: [],
       isTutorialMode: [],
-      partner: [],
+      dots_partner: [],
       dots_staircase: [],
       majoritySide: [],
       initial_choices: [],
