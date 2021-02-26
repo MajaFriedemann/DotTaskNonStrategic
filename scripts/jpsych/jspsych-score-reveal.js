@@ -51,8 +51,8 @@ jsPsych.plugins['jspsych-score-reveal'] = (function () {
     switch(trial.performanceType) {
       case 'brier':
         var paymentFactor = 2;
+        overallScore = round(overallScore, 2);
         var bonusPayment  = round(overallScore * paymentFactor / 100, 2);
-
         dataObject["score"] = overallScore;
         dataObject["bonus_payment"] = bonusPayment;
 
