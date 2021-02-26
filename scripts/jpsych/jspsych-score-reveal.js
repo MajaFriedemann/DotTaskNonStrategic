@@ -54,7 +54,7 @@ jsPsych.plugins['jspsych-score-reveal'] = (function () {
         overallScore = round(overallScore, 2);
         var bonusPayment  = round(overallScore * paymentFactor / 100, 2);
         dataObject["score"] = overallScore;
-        dataObject["bonus_payment"] = bonusPayment;
+        dataObject["bonus"] = bonusPayment;
 
 
         paymentMessage = 'Congratulations, you have reached a score of ' + overallScore + ' in this experiment!';
