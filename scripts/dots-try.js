@@ -574,9 +574,6 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                 trialDataVariable['initial_choices'].push(initialChoice);
                 trialDataVariable['partner_confidences'].push(partnerConfidences);
                 trialDataVariable['dots_RTs'].push(dotRTs);
-                trialDataVariable['confidence_RTs'].push(confidenceRTs);
-                trialDataVariable['dots_second_RTs'].push(dotsSecondRTs);
-                trialDataVariable['info_choice_RTs'].push(infoChoiceRTs);
                 trialDataVariable['isTutorialMode'].push(isTutorialMode);
                 trialDataVariable['dots_partner'].push(partner);
                 trialCounterVariable++;

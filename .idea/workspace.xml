@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="3df47766-bd0d-44d8-9d5e-755754b7705f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/dots-try.js" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/dots-try.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/jpsych/jspsych-score-reveal.js" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/jpsych/jspsych-score-reveal.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -185,7 +184,6 @@
       <workItem from="1614280931603" duration="983000" />
       <workItem from="1614282805371" duration="348000" />
       <workItem from="1614335010033" duration="168000" />
-      <workItem from="1614346068032" duration="1494000" />
     </task>
     <servers />
   </component>
@@ -196,10 +194,10 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="-1341" y="203" width="923" height="854" key="find.popup" timestamp="1614347702612">
-      <screen x="-1920" y="0" width="1920" height="1160" />
+    <state x="463" y="144" width="739" height="607" key="find.popup" timestamp="1614335156690">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="-1341" y="203" width="923" height="854" key="find.popup/0.0.1536.824/-1920.0.1920.1160@-1920.0.1920.1160" timestamp="1614347702612" />
+    <state x="-1341" y="203" width="923" height="854" key="find.popup/0.0.1536.824/-1920.0.1920.1160@-1920.0.1920.1160" timestamp="1614282950811" />
     <state x="463" y="144" width="740" height="606" key="find.popup/0.0.1536.824/-1920.0.1920.1160@0.0.1536.824" timestamp="1614267225739" />
     <state x="463" y="144" width="739" height="607" key="find.popup/0.0.1536.824@0.0.1536.824" timestamp="1614335156690" />
   </component>
