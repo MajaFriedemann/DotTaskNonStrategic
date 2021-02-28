@@ -162,6 +162,9 @@ jsPsych.plugins['jspsych-dots'] = (function () {
       change_of_mind: [],
 
       dots_RTs: [],
+      confidence_RTs: [],
+      info_choice_RTs: [],
+      dots_second_RTs: [],
       dots_waitTimes: [],
     };
 

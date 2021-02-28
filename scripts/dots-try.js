@@ -574,6 +574,9 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                 trialDataVariable['initial_choices'].push(initialChoice);
                 trialDataVariable['partner_confidences'].push(partnerConfidences);
                 trialDataVariable['dots_RTs'].push(dotRTs);
+                trialDataVariable['confidence_RTs'].push(confidenceRTs);
+                trialDataVariable['dots_second_RTs'].push(dotsSecondRTs);
+                trialDataVariable['info_choice_RTs'].push(infoChoiceRTs);
                 trialDataVariable['isTutorialMode'].push(isTutorialMode);
                 trialDataVariable['dots_partner'].push(partner);
                 trialCounterVariable++;
@@ -678,6 +681,9 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                                     permanentDataVariable["dots_partnerCorrect"].push(trialDataVariable["dots_partnerCorrect"]);
                                     //permanentDataVariable["dots_participantCorrect"].push(trialDataVariable["dots_participantCorrect"]);
                                     permanentDataVariable["dots_RTs"].push(trialDataVariable["dots_RTs"]);
+                                    permanentDataVariable["dots_second_RTs"].push(trialDataVariable["dots_second_RTs"]);
+                                    permanentDataVariable["confidence_RTs"].push(trialDataVariable["confidence_RTs"]);
+                                    permanentDataVariable["info_choice_RTs"].push(trialDataVariable["info_choice_RTs"]);
                                     permanentDataVariable["dots_waitTimes"].push(trialDataVariable["dots_waitTimes"]);
                                     permanentDataVariable["block_count"].push(dots_blockCount);
 
@@ -729,6 +735,9 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                                     change_of_mind: [],
 
                                     dots_RTs: [],
+                                    confidence_RTs: [],
+                                    info_choice_RTs: [],
+                                    dots_second_RTs: [],
                                     dots_waitTimes: []
                                 };
                                 $('#dots-tutorial-continue').on('click', function () {
@@ -756,7 +765,9 @@ function drawDots(parent, canvasID, canvasWidth, canvasHeight, dotCount, dotsSta
                             permanentDataVariable["dots_partnerCorrect"].push(trialDataVariable["dots_partnerCorrect"]);
                             //permanentDataVariable["dots_participantCorrect"].push(trialDataVariable["dots_participantCorrect"]);
                             permanentDataVariable["dots_RTs"].push(trialDataVariable["dots_RTs"]);
-                            permanentDataVariable["dots_waitTimes"].push(trialDataVariable["dots_waitTimes"]);
+                            permanentDataVariable["dots_second_RTs"].push(trialDataVariable["dots_second_RTs"]);
+                            permanentDataVariable["confidence_RTs"].push(trialDataVariable["confidence_RTs"]);
+                            permanentDataVariable["info_choice_RTs"].push(trialDataVariable["info_choice_RTs"]);                            permanentDataVariable["dots_waitTimes"].push(trialDataVariable["dots_waitTimes"]);
                             permanentDataVariable["block_count"].push(dots_blockCount);
 
                             //permanentDataVariable["participant_chosen"].push(trialDataVariable["participant_chosen"]);
