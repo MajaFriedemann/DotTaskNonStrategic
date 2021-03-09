@@ -73,7 +73,7 @@
     var ProlificID = getUrlVars()['PROLIFIC_PID'];
     console.log(ProlificID);
     // NOTE ADD COMPLETION CODE HERE!
-    var completionCode = "DEE7049F";
+    var completionCode = "64844D80";
     var completionURL = "https://app.prolific.ac/submissions/complete?cc=" + completionCode;
     var PHQexclusionURL = "https://app.prolific.ac/submissions/complete?cc=EXCLU001";
 
@@ -81,8 +81,8 @@
 
     var subjectID;
     var studyName = 'Confidence in group decision-making';
-    var version = 'non-strategic version';
-    var release_date = '2021/02/23';
+    var version = 'non-strategic version 1/2';
+    var release_date = '2021/03/09';
     var testing_timeline = false;
     var trialTypeOrder = 'all';          /* "testing" or "all"  |  for "testing" the right click context menu is enabled and the data will be downloaded as a csv file*/
     var scoreRuleOrder = 'brier';
@@ -558,7 +558,7 @@
                 order = "underconfident, then overconfident";
                 dataObject["experiment_condition"] = order;
                 var timeline = [
-                    // loading,
+                    loading,
                     PIS,
                     consent,
                     demographics,
@@ -605,7 +605,7 @@
                 order = "overconfident, then underconfident";
                 dataObject["experiment_condition"] = order;
                 var timeline = [
-                    // loading,
+                    loading,
                     PIS,
                     consent,
                     demographics,

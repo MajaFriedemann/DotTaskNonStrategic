@@ -165,7 +165,7 @@ jsPsych.plugins['jspsych-dots'] = (function () {
       confidence_RTs: [],
       info_choice_RTs: [],
       dots_second_RTs: [],
-      dots_waitTimes: [],
+      dots_waitTimes: []
     };
 
     // set confidence slider options
